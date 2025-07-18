@@ -1,0 +1,16 @@
+Здесь должны быть изображения коллекций:
+- nike-dunk-low.jpg
+- new-balance.jpg
+- air-jordan-1-low.jpg
+- air-jordan-3.jpg
+- air-jordan-4.jpg
+- air-jordan-5.jpg
+- air-jordan-1-mid.jpg
+- air-jordan-1-high.jpg
+- air-force-1-low.jpg
+- air-force-1.jpg
+- salomon.jpg
+- adidas-yeezy.jpg
+
+Размер изображений: 400x300px (прямоугольные)
+Формат: JPG 
