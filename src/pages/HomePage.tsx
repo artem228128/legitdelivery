@@ -1853,6 +1853,11 @@ const HomePage: React.FC = () => {
           WebkitTextFillColor: 'initial',
           backgroundClip: 'initial'
         }}>ЧОМУ <span style={{ color: '#FFD700' }}>LEGIT</span><span style={{ color: 'white' }}>DELIVERY?</span></SectionTitle>
+        <img
+          src="https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg"
+          alt="LegitDelivery"
+          style={{ width: '100%', maxWidth: 400, margin: '0 auto 24px', display: 'block', borderRadius: 16 }}
+        />
         <StatsGrid>
           <StatCard $delay={0}>
             <div className="number">2000+</div>
