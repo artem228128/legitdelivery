@@ -381,7 +381,7 @@ const SizeGuidePage: React.FC = () => {
           </div>
 
           <div className="measurement-image">
-            <img src="/images/sizeguid.png" alt="Як правильно виміряти стопу" />
+            <img src="https://res.cloudinary.com/dvy87ylmu/image/upload/v1752879544/sizeguid.png" alt="Як правильно виміряти стопу" />
           </div>
         </InstructionsSection>
 

@@ -1855,7 +1855,7 @@ const HomePage: React.FC = () => {
         }}>ЧОМУ <span style={{ color: '#FFD700' }}>LEGIT</span><span style={{ color: 'white' }}>DELIVERY?</span></SectionTitle>
         <StatsGrid>
           <StatCard $delay={0}>
-            <div className="number">2000+</div>
+                            <div className="number">1400+</div>
             <div className="label">моделей продали за 4 роки</div>
           </StatCard>
           <StatCard $delay={0.2}>
