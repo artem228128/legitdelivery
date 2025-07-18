@@ -127,15 +127,55 @@ const HeroVideoContainer = styled.div`
 
 const VideoBg = styled.video`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translateX(-50%) translateY(-50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   z-index: 1;
+`;
+
+const HeroBackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg');
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  animation: slowZoom 20s ease-in-out infinite alternate;
+  
+  @keyframes slowZoom {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.05);
+    }
+  }
+`;
+
+const YoutubeVideo = styled.iframe`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 2;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  @media (max-width: 768px) {
+    display: none; /* Скрыть на мобильных для экономии трафика */
+  }
 `;
 
 const HeroOverlay = styled.div`
@@ -1566,7 +1606,7 @@ const HomePage: React.FC = () => {
     const video = videoRef.current;
     if (video) {
       // Set video source directly as fallback
-      video.src = '"https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"';
+      video.src = "/images/bg.mp4";
       
       const playVideo = async () => {
         try {
@@ -1640,7 +1680,7 @@ const HomePage: React.FC = () => {
             onLoadedData={() => console.log('Video loaded')}
             onError={(e) => console.error('Video error:', e)}
           >
-            <source src="https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4" type="video/mp4" />
+            <source src="/images/bg.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </VideoBg>
         </HeroVideoContainer>
