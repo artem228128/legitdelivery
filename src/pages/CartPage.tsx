@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, Shield, CreditCard } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -293,54 +293,98 @@ const Features = styled.div`
 `;
 
 const CheckoutForm = styled.div`
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
   
-  h3 {
-    font-size: 1.3rem;
-    color: var(--text-dark);
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
+  .form-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
     
-    label {
-      display: block;
-      margin-bottom: 8px;
+    h3 {
+      font-size: 1.8rem;
       color: var(--text-dark);
-      font-weight: 500;
+      margin-bottom: 10px;
     }
     
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
+    .form-description {
+      color: var(--text-light);
+      margin-bottom: 30px;
       font-size: 1rem;
+    }
+    
+    .messenger-note {
+      background: var(--primary-yellow);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 20px 0;
       
-      &:focus {
-        outline: none;
-        border-color: var(--primary-blue);
+      p {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin: 0;
+        font-size: 0.9rem;
       }
     }
     
-    textarea {
-      resize: vertical;
-      min-height: 80px;
+    .form-group {
+      margin-bottom: 20px;
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+      
+      input, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        font-size: 1rem;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--primary-blue);
+        }
+        
+        &.error {
+          border-color: #ff4444;
+          background-color: #fff5f5;
+        }
+      }
+      
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
     }
-  }
-  
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
     
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      
+      &:hover {
+        color: var(--text-dark);
+      }
     }
   }
 `;
@@ -351,13 +395,12 @@ const CartPage: React.FC = () => {
   const [orderForm, setOrderForm] = useState<OrderForm>({
     name: '',
     phone: '',
-    email: '',
-    address: '',
-    city: '',
-    paymentMethod: 'card',
-    deliveryMethod: 'delivery',
+    instagram: '',
     comments: ''
   });
+  
+  const [errors, setErrors] = useState<Partial<OrderForm>>({});
+  const navigate = useNavigate();
 
   const handleQuantityChange = (productId: string, size: string, change: number) => {
     const currentItem = items.find(item => item.product.id === productId && item.size === size);
@@ -370,18 +413,60 @@ const CartPage: React.FC = () => {
   };
 
   const handleFormChange = (field: keyof OrderForm, value: string) => {
-    setOrderForm(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setOrderForm(prev => ({ ...prev, [field]: value }));
+    // Очищаем ошибку для этого поля при изменении
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const handleSubmitOrder = () => {
-    // Here you would typically send the order to your backend
-    console.log('Order submitted:', { items, orderForm, total: getTotalPrice() });
-    alert('Замовлення успішно оформлено! Ми зв\'яжемося з вами найближчим часом.');
+    const newErrors: Partial<OrderForm> = {};
+    
+    // Проверяем, что заполнены все обязательные поля
+    if (!orderForm.name) {
+      newErrors.name = 'Введіть ваше ім\'я';
+    }
+    
+    if (!orderForm.phone) {
+      newErrors.phone = 'Введіть номер телефону';
+    } else {
+      const phoneDigits = orderForm.phone.replace(/\D/g, '');
+      if (phoneDigits.length < 10) {
+        newErrors.phone = 'Введіть коректний номер телефону';
+      }
+    }
+    
+    if (!orderForm.instagram) {
+      newErrors.instagram = 'Введіть Instagram';
+    } else if (!orderForm.instagram.startsWith('@')) {
+      newErrors.instagram = 'Instagram повинен починатися з @';
+    }
+    
+    // Если есть ошибки, показываем их
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    // Очищаем ошибки
+    setErrors({});
+    
+    // Здесь можно добавить логику отправки заказа
+    console.log('Заказ отправлен:', orderForm);
+    
+    // Очищаем корзину и закрываем форму
     clearCart();
     setShowCheckout(false);
+    setOrderForm({
+      name: '',
+      phone: '',
+      instagram: '',
+      comments: ''
+    });
+    
+    // Редирект на страницу успеха
+    navigate('/order-success');
   };
 
   if (items.length === 0) {
@@ -491,94 +576,69 @@ const CartPage: React.FC = () => {
       </CartLayout>
       
       {showCheckout && (
-        <CheckoutForm>
-          <h3>Оформлення замовлення</h3>
-          <div className="form-row">
+        <CheckoutForm onClick={() => setShowCheckout(false)}>
+          <div className="form-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-button" onClick={() => setShowCheckout(false)}>
+              <X size={24} />
+            </button>
+            
+            <h3>Оформлення замовлення</h3>
+            <p className="form-description">Після підтвердження з вами звʼяжеться менеджер в месенджері</p>
+            
             <div className="form-group">
-              <label>Ім'я *</label>
+              <label>Ваше імʼя *</label>
               <input
                 type="text"
                 value={orderForm.name}
                 onChange={(e) => handleFormChange('name', e.target.value)}
+                placeholder="Дмитро"
                 required
+                className={errors.name ? 'error' : ''}
               />
+              {errors.name && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.name}</p>}
             </div>
+            
             <div className="form-group">
-              <label>Телефон *</label>
+              <label>Ваш телефон *</label>
               <input
                 type="tel"
                 value={orderForm.phone}
                 onChange={(e) => handleFormChange('phone', e.target.value)}
+                placeholder="+380 (99) 999-99-99"
                 required
+                className={errors.phone ? 'error' : ''}
               />
+              {errors.phone && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.phone}</p>}
             </div>
-          </div>
-          
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={orderForm.email}
-              onChange={(e) => handleFormChange('email', e.target.value)}
-            />
-          </div>
-          
-          <div className="form-row">
+            
             <div className="form-group">
-              <label>Місто *</label>
+              <label>Instagram *</label>
               <input
                 type="text"
-                value={orderForm.city}
-                onChange={(e) => handleFormChange('city', e.target.value)}
+                value={orderForm.instagram}
+                onChange={(e) => handleFormChange('instagram', e.target.value)}
+                placeholder="@username"
                 required
+                className={errors.instagram ? 'error' : ''}
               />
+              {errors.instagram && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.instagram}</p>}
             </div>
+            
             <div className="form-group">
-              <label>Спосіб доставки *</label>
-              <select
-                value={orderForm.deliveryMethod}
-                onChange={(e) => handleFormChange('deliveryMethod', e.target.value)}
-              >
-                <option value="delivery">Доставка кур'єром</option>
-                <option value="pickup">Самовивіз</option>
-              </select>
+              <label>Коментар до замовлення</label>
+              <textarea
+                value={orderForm.comments}
+                onChange={(e) => handleFormChange('comments', e.target.value)}
+                placeholder="Додаткові побажання..."
+                className={errors.comments ? 'error' : ''}
+              />
+              {errors.comments && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.comments}</p>}
             </div>
+            
+            <CheckoutButton onClick={handleSubmitOrder}>
+              Підтвердити замовлення на {getTotalPrice().toLocaleString()} ₴
+            </CheckoutButton>
           </div>
-          
-          <div className="form-group">
-            <label>Адреса доставки *</label>
-            <input
-              type="text"
-              value={orderForm.address}
-              onChange={(e) => handleFormChange('address', e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Спосіб оплати *</label>
-            <select
-              value={orderForm.paymentMethod}
-              onChange={(e) => handleFormChange('paymentMethod', e.target.value)}
-            >
-              <option value="card">Банківською картою</option>
-              <option value="cash">Готівкою при отриманні</option>
-              <option value="online">Онлайн-платіж</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label>Коментар до замовлення</label>
-            <textarea
-              value={orderForm.comments}
-              onChange={(e) => handleFormChange('comments', e.target.value)}
-              placeholder="Додаткові побажання..."
-            />
-          </div>
-          
-          <CheckoutButton onClick={handleSubmitOrder}>
-            Підтвердити замовлення на {getTotalPrice().toLocaleString()} ₴
-          </CheckoutButton>
         </CheckoutForm>
       )}
     </CartContainer>

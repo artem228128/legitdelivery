@@ -76,10 +76,6 @@ export interface SortOptions {
 export interface OrderForm {
   name: string;
   phone: string;
-  email: string;
-  address: string;
-  city: string;
-  paymentMethod: 'card' | 'cash' | 'online';
-  deliveryMethod: 'pickup' | 'delivery';
+  instagram: string;
   comments?: string;
 } 

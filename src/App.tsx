@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import ProductPage from './pages/ProductPage';
@@ -12,6 +13,7 @@ import ContactPage from './pages/ContactPage';
 import DeliveryPage from './pages/DeliveryPage';
 import WarrantyPage from './pages/WarrantyPage';
 import UserAgreementPage from './pages/UserAgreementPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -80,6 +82,7 @@ function App() {
     <CartProvider>
       <Router>
         <GlobalStyle />
+        <ScrollToTop />
         <AppContainer>
           <Header />
           <MainContent>
@@ -93,6 +96,7 @@ function App() {
               <Route path="/payment-delivery" element={<DeliveryPage />} />
               <Route path="/warranty" element={<WarrantyPage />} />
               <Route path="/user-agreement" element={<UserAgreementPage />} />
+              <Route path="/order-success" element={<OrderSuccessPage />} />
             </Routes>
           </MainContent>
           <Footer />
