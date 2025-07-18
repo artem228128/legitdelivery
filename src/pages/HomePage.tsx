@@ -114,6 +114,11 @@ const HeroSection = styled.section`
   color: white;
   text-align: center;
   background: #000;
+  
+  @media (max-width: 768px) {
+    height: 100vh;
+    min-height: -webkit-fill-available;
+  }
 `;
 
 const HeroVideoContainer = styled.div`
@@ -124,19 +129,40 @@ const HeroVideoContainer = styled.div`
   height: calc(100% + 120px);
   z-index: 1;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    top: 0;
+    height: 100%;
+  }
 `;
 
-const BackgroundVideo = styled.iframe`
+const BackgroundVideo = styled.video`
   position: absolute;
   top: 50%;
   left: 50%;
   width: 100vw;
-  height: calc(100vh + 120px);
+  height: 100vh;
   transform: translate(-50%, -50%);
-  border: none;
-  z-index: 1;
-  pointer-events: none;
   object-fit: cover;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+`;
+
+const VideoFallback = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg') center/cover;
+  z-index: 0;
 `;
 
 const HeroBackgroundImage = styled.div`
@@ -484,8 +510,11 @@ const PopularSection = styled.section<{ $isVisible?: boolean }>`
   transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
   transition: opacity 1s ease-out, transform 1s ease-out;
   z-index: 2;
+  margin-top: -1px;
+  
   @media (max-width: 768px) {
     padding: 60px 0 40px 0;
+    margin-top: -1px;
   }
 `;
 
@@ -1360,24 +1389,20 @@ const AboutImage = styled.div<{ $delay?: number; $isVisible?: boolean }>`
   }
 `;
 
-const SectionTitle = styled.h2<{ $color?: string; $isCategories?: boolean }>`
-  text-align: center;
-  font-size: 3rem;
+const SectionTitle = styled.h2`
+  font-size: 2.5rem;
   font-weight: 900;
-  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  margin-bottom: 80px;
-  color: ${props => props.$isCategories ? '#ffffff' : '#1a1a1a'};
-  animation: ${fadeInUp} 0.8s ease-out;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  position: relative;
+  text-align: center;
+  margin: 0 0 40px 0;
+  padding-top: 0;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
   @media (max-width: 768px) {
-    font-size: 2.5rem;
-    margin-bottom: 60px;
-  }
-  @media (max-width: 480px) {
     font-size: 2rem;
-    margin-bottom: 40px;
+    margin: 0 0 30px 0;
   }
 `;
 
@@ -1459,13 +1484,18 @@ const marqueeAnimation = keyframes`
 const MarqueeStrip = styled.div`
   width: 100%;
   height: 80px;
-  background: #000;
+  background: #fff;
   overflow: hidden;
   position: relative;
   margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
   
   @media (max-width: 768px) {
     height: 60px;
+    margin: 0;
+    padding: 0;
   }
 `;
 
@@ -1480,6 +1510,8 @@ const MarqueeContent = styled.div`
   background-size: contain;
   animation: ${marqueeAnimation} 15s linear infinite;
   will-change: transform;
+  margin: 0;
+  padding: 0;
 `;
 
 const BrandLogo = styled.img`
@@ -1661,12 +1693,21 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <HeroSection>
         <HeroVideoContainer>
+          <VideoFallback />
           <BackgroundVideo
-            src="https://player.cloudinary.com/embed/?cloud_name=dvy87ylmu&public_id=bg&profile=cld-default&autoplay=1&muted=1&loop=1&controls=0&showinfo=0&background=1&mute_on_start=1&quality=1080p&quality_mode=auto"
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-            allowFullScreen
-            frameBorder="0"
-          />
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg"
+            onLoadStart={() => console.log('Video loading started')}
+            onLoadedData={() => console.log('Video loaded')}
+            onError={(e) => console.error('Video error:', e)}
+          >
+            <source src="/videos/bg.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </BackgroundVideo>
         </HeroVideoContainer>
         <HeroOverlay />
         <HeroContent>
@@ -1689,13 +1730,9 @@ const HomePage: React.FC = () => {
           </HeroStats>
         </HeroContent>
       </HeroSection>
-
-      {/* Brands Marquee */}
       <MarqueeStrip>
         <MarqueeContent />
       </MarqueeStrip>
-
-      {/* Popular Products Section */}
       <PopularSection ref={popularSectionRef} $isVisible={isVisible['popular-section']}>
         <SectionTitle>ПОПУЛЯРНІ МОДЕЛІ</SectionTitle>
         <ScrollIndicator>
