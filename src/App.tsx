@@ -9,6 +9,8 @@ import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import DeliveryPage from './pages/DeliveryPage';
+import WarrantyPage from './pages/WarrantyPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -87,6 +89,8 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/payment-delivery" element={<DeliveryPage />} />
+              <Route path="/warranty" element={<WarrantyPage />} />
             </Routes>
           </MainContent>
           <Footer />

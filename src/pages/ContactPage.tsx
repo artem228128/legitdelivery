@@ -281,6 +281,7 @@ const ContactPage: React.FC = () => {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -296,7 +297,7 @@ const ContactPage: React.FC = () => {
     
     // Simulate form submission
     setTimeout(() => {
-      alert('Спасибо за обращение! Мы свяжемся с вами в ближайшее время.');
+      setIsSubmitted(true);
       setFormData({
         name: '',
         email: '',
@@ -305,33 +306,38 @@ const ContactPage: React.FC = () => {
         message: ''
       });
       setIsSubmitting(false);
+      
+      // Reset button state after 3 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
     }, 1000);
   };
 
   return (
     <ContactContainer>
       <Header>
-        <h1>Контакты</h1>
+        <h1>Контакти</h1>
         <p>
-          Свяжитесь с нами любым удобным способом. Мы всегда готовы помочь 
-          и ответить на ваши вопросы.
+          Зв'яжіться з нами зручним для вас способом. Ми завжди готові допомогти 
+          та відповісти на ваші питання.
         </p>
       </Header>
 
       <ContactLayout>
         <ContactForm>
-          <h2>Напишите нам</h2>
+          <h2>Напишіть нам</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="name">Ваше имя *</label>
+                <label htmlFor="name">Ваше ім'я *</label>
                 <input
                   type="text"
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Введите ваше имя"
+                  placeholder="Введіть ваше ім'я"
                   required
                 />
               </div>
@@ -362,7 +368,7 @@ const ContactPage: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="subject">Тема обращения *</label>
+                <label htmlFor="subject">Тема звернення *</label>
                 <select
                   id="subject"
                   name="subject"
@@ -370,38 +376,45 @@ const ContactPage: React.FC = () => {
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="">Выберите тему</option>
-                  <option value="order">Вопрос по заказу</option>
-                  <option value="product">Вопрос о товаре</option>
+                  <option value="">Оберіть тему</option>
+                  <option value="order">Питання по замовленню</option>
+                  <option value="product">Питання про товар</option>
                   <option value="delivery">Доставка</option>
-                  <option value="return">Возврат/обмен</option>
-                  <option value="partnership">Сотрудничество</option>
-                  <option value="other">Другое</option>
+                  <option value="return">Повернення/обмін</option>
+                  <option value="partnership">Співпраця</option>
+                  <option value="other">Інше</option>
                 </select>
               </div>
             </div>
             
             <div className="form-group">
-              <label htmlFor="message">Сообщение *</label>
+              <label htmlFor="message">Повідомлення *</label>
               <textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleInputChange}
-                placeholder="Опишите ваш вопрос подробно..."
+                placeholder="Опишіть ваше питання детально..."
                 required
               />
             </div>
             
-            <SubmitButton type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Отправка...' : 'Отправить сообщение'}
+            <SubmitButton 
+              type="submit" 
+              disabled={isSubmitting}
+              style={{
+                background: isSubmitted ? '#4CAF50' : 'var(--primary-blue)',
+                transform: isSubmitted ? 'none' : undefined
+              }}
+            >
+              {isSubmitted ? 'Відправлено' : (isSubmitting ? 'Відправка...' : 'Відправити повідомлення')}
               <Send size={20} />
             </SubmitButton>
           </form>
         </ContactForm>
 
         <ContactInfo>
-          <h2>Как с нами связаться</h2>
+          <h2>Як з нами зв’язатися</h2>
           
           <InfoItem>
             <div className="icon">
@@ -410,9 +423,9 @@ const ContactPage: React.FC = () => {
             <div className="info">
               <h3>Телефон</h3>
               <p>
-                <a href="tel:+380991234567">+38 (099) 123-45-67</a><br />
+                <a href="tel:+380994316577">+38 (099) 431-65-77</a><br />
                 Пн-Пт: 9:00 - 18:00<br />
-                Сб-Вс: 10:00 - 16:00
+                Сб-Нд: 11:00 - 16:00
               </p>
             </div>
           </InfoItem>
@@ -424,22 +437,8 @@ const ContactPage: React.FC = () => {
             <div className="info">
               <h3>Email</h3>
               <p>
-                <a href="mailto:info@streetkicks.com">info@streetkicks.com</a><br />
-                Ответим в течение 24 часов
-              </p>
-            </div>
-          </InfoItem>
-          
-          <InfoItem>
-            <div className="icon">
-              <MapPin size={24} />
-            </div>
-            <div className="info">
-              <h3>Адрес</h3>
-              <p>
-                г. Киев, ул. Крещатик, 1<br />
-                Офис 501, 5 этаж<br />
-                01001, Украина
+                <a href="mailto:legitdeliveryua@gmail.com">legitdeliveryua@gmail.com</a><br />
+                Відповімо протягом 24 годин
               </p>
             </div>
           </InfoItem>
@@ -449,11 +448,10 @@ const ContactPage: React.FC = () => {
               <Clock size={24} />
             </div>
             <div className="info">
-              <h3>Режим работы</h3>
+              <h3>Графік роботи</h3>
               <p>
-                Пн-Пт: 9:00 - 18:00<br />
-                Сб-Вс: 10:00 - 16:00<br />
-                Онлайн-магазин: 24/7
+                Пн-Пт: 09:00-23:00<br />
+                Сб-Нд: 11:00-16:00
               </p>
             </div>
           </InfoItem>
@@ -469,60 +467,30 @@ const ContactPage: React.FC = () => {
         </ContactInfo>
       </ContactLayout>
 
-      <MapSection>
-        <h2>Как нас найти</h2>
-        <p>Наш офис находится в самом центре Киева</p>
-        <div className="map-placeholder" />
-      </MapSection>
-
       <FAQSection>
-        <h2>Часто задаваемые вопросы</h2>
+        <h2>Поширені питання</h2>
         <div className="faq-grid">
           <FAQItem>
-            <h3>Как оформить заказ?</h3>
+            <h3>Як оформити замовлення?</h3>
             <p>
-              Выберите товар в каталоге, добавьте в корзину и следуйте 
-              инструкциям на странице оформления заказа.
+              Оберіть товар у каталозі, додайте в кошик і дотримуйтесь 
+              інструкцій на сторінці оформлення замовлення.
             </p>
           </FAQItem>
           
           <FAQItem>
-            <h3>Сколько стоит доставка?</h3>
+            <h3>Скільки коштує доставка?</h3>
             <p>
-              Доставка бесплатная при заказе от 1000 ₴. При меньшей 
-              сумме заказа стоимость доставки составляет 100 ₴.
+              Доставка безкоштовна при замовленні від 1000 ₴. При меншій 
+              сумі замовлення вартість доставки складає 100 ₴.
             </p>
           </FAQItem>
           
           <FAQItem>
-            <h3>Можно ли вернуть товар?</h3>
+            <h3>Чи можна повернути товар?</h3>
             <p>
-              Да, вы можете вернуть товар в течение 14 дней с момента 
-              получения, если он не подошел по размеру или не понравился.
-            </p>
-          </FAQItem>
-          
-          <FAQItem>
-            <h3>Все ли товары оригинальные?</h3>
-            <p>
-              Мы работаем только с официальными поставщиками и 
-              гарантируем 100% оригинальность всех товаров.
-            </p>
-          </FAQItem>
-          
-          <FAQItem>
-            <h3>Как долго доставляется заказ?</h3>
-            <p>
-              По Киеву доставка занимает 1-2 рабочих дня. По Украине — 
-              2-5 рабочих дней в зависимости от региона.
-            </p>
-          </FAQItem>
-          
-          <FAQItem>
-            <h3>Есть ли программа лояльности?</h3>
-            <p>
-              Да, мы предоставляем скидки постоянным клиентам и 
-              регулярно проводим специальные акции.
+              Так, ви можете повернути товар протягом 14 днів з моменту 
+              отримання, якщо він не був у використанні та збережено товарний вигляд.
             </p>
           </FAQItem>
         </div>
