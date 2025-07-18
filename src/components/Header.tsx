@@ -127,6 +127,11 @@ const IconButton = styled.button<{ $isHomePage: boolean }>`
   transition: background-color 0.3s ease;
   position: relative;
   color: ${props => props.$isHomePage ? 'white' : '#2c3e50'};
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     background-color: ${props => props.$isHomePage 
@@ -137,8 +142,8 @@ const IconButton = styled.button<{ $isHomePage: boolean }>`
 
 const CartBadge = styled.span`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -8px;
+  right: -8px;
   background: var(--primary-yellow);
   color: var(--text-dark);
   border-radius: 50%;
@@ -149,6 +154,7 @@ const CartBadge = styled.span`
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
+  z-index: 1;
 `;
 
 const MobileMenuButton = styled(IconButton)`

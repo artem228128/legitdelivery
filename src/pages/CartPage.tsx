@@ -394,13 +394,53 @@ const CartPage: React.FC = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderForm, setOrderForm] = useState<OrderForm>({
     name: '',
-    phone: '',
+    phone: '+380',
     instagram: '',
     comments: ''
   });
   
   const [errors, setErrors] = useState<Partial<OrderForm>>({});
   const navigate = useNavigate();
+
+  // Функция форматирования телефона
+  const formatPhoneNumber = (value: string) => {
+    // Убираем все кроме цифр
+    const digits = value.replace(/\D/g, '');
+    
+    // Если нет цифр, возвращаем +380
+    if (digits.length === 0) return '+380';
+    
+    // Если начинается не с 380, добавляем 380 в начало
+    let phoneDigits = digits;
+    if (!phoneDigits.startsWith('380')) {
+      phoneDigits = '380' + phoneDigits;
+    }
+    
+    // Ограничиваем до 12 цифр (380 + 9 цифр номера)
+    phoneDigits = phoneDigits.slice(0, 12);
+    
+    // Форматируем номер
+    let formatted = '+380';
+    
+    if (phoneDigits.length > 3) {
+      // Добавляем код оператора (2 цифры после 380)
+      formatted += ' (' + phoneDigits.slice(3, 5);
+      if (phoneDigits.length > 5) {
+        // Добавляем первые 3 цифры номера
+        formatted += ') ' + phoneDigits.slice(5, 8);
+        if (phoneDigits.length > 8) {
+          // Добавляем следующие 2 цифры
+          formatted += '-' + phoneDigits.slice(8, 10);
+          if (phoneDigits.length > 10) {
+            // Добавляем последние 2 цифры
+            formatted += '-' + phoneDigits.slice(10, 12);
+          }
+        }
+      }
+    }
+    
+    return formatted;
+  };
 
   const handleQuantityChange = (productId: string, size: string, change: number) => {
     const currentItem = items.find(item => item.product.id === productId && item.size === size);
@@ -432,15 +472,14 @@ const CartPage: React.FC = () => {
       newErrors.phone = 'Введіть номер телефону';
     } else {
       const phoneDigits = orderForm.phone.replace(/\D/g, '');
-      if (phoneDigits.length < 10) {
-        newErrors.phone = 'Введіть коректний номер телефону';
+      // Проверяем что номер начинается с 380 и имеет 12 цифр (380 + 9 цифр номера)
+      if (phoneDigits.length < 12 || !phoneDigits.startsWith('380')) {
+        newErrors.phone = 'Введіть коректний український номер телефону';
       }
     }
     
     if (!orderForm.instagram) {
       newErrors.instagram = 'Введіть Instagram';
-    } else if (!orderForm.instagram.startsWith('@')) {
-      newErrors.instagram = 'Instagram повинен починатися з @';
     }
     
     // Если есть ошибки, показываем их
@@ -460,7 +499,7 @@ const CartPage: React.FC = () => {
     setShowCheckout(false);
     setOrderForm({
       name: '',
-      phone: '',
+      phone: '+380',
       instagram: '',
       comments: ''
     });
@@ -603,7 +642,7 @@ const CartPage: React.FC = () => {
               <input
                 type="tel"
                 value={orderForm.phone}
-                onChange={(e) => handleFormChange('phone', e.target.value)}
+                onChange={(e) => handleFormChange('phone', formatPhoneNumber(e.target.value))}
                 placeholder="+380 (99) 999-99-99"
                 required
                 className={errors.phone ? 'error' : ''}
@@ -617,7 +656,7 @@ const CartPage: React.FC = () => {
                 type="text"
                 value={orderForm.instagram}
                 onChange={(e) => handleFormChange('instagram', e.target.value)}
-                placeholder="@username"
+                placeholder="username або посилання"
                 required
                 className={errors.instagram ? 'error' : ''}
               />
