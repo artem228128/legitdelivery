@@ -1640,7 +1640,7 @@ const HomePage: React.FC = () => {
             onLoadedData={() => console.log('Video loaded')}
             onError={(e) => console.error('Video error:', e)}
           >
-            <source src=""https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </VideoBg>
         </HeroVideoContainer>
@@ -1754,7 +1754,7 @@ const HomePage: React.FC = () => {
             </AboutCommunity>
           </AboutContent>
           <AboutImage $delay={0.6} $isVisible={isVisible['about-section']}>
-            <img src=""https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg"" alt="Legitdelivery About" />
+            <img src="https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg" alt="Legitdelivery About" />
           </AboutImage>
         </AboutContainer>
       </AboutSection>
