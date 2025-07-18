@@ -1507,7 +1507,7 @@ const MarqueeContent = styled.div`
   height: 100%;
   width: 200%;
   background: url('https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849111/scrollimg.png') repeat-x;
-  background-size: contain;
+  background-size: auto 100%;
   animation: ${marqueeAnimation} 15s linear infinite;
   will-change: transform;
   margin: 0;
