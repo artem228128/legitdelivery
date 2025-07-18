@@ -118,21 +118,25 @@ const HeroSection = styled.section`
 
 const HeroVideoContainer = styled.div`
   position: absolute;
-  top: 0;
+  top: -60px;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 120px);
   z-index: 1;
+  overflow: hidden;
 `;
 
-const VideoBg = styled.video`
+const BackgroundVideo = styled.iframe`
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: calc(100vh + 120px);
+  transform: translate(-50%, -50%);
+  border: none;
   z-index: 1;
+  pointer-events: none;
+  object-fit: cover;
 `;
 
 const HeroBackgroundImage = styled.div`
@@ -146,36 +150,6 @@ const HeroBackgroundImage = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   z-index: 1;
-  animation: slowZoom 20s ease-in-out infinite alternate;
-  
-  @keyframes slowZoom {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(1.05);
-    }
-  }
-`;
-
-const YoutubeVideo = styled.iframe`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  z-index: 2;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-  
-  &:hover {
-    opacity: 1;
-  }
-  
-  @media (max-width: 768px) {
-    display: none; /* Скрыть на мобильных для экономии трафика */
-  }
 `;
 
 const HeroOverlay = styled.div`
@@ -499,42 +473,7 @@ const CategoryInfo = styled.div`
   }
 `;
 
-// Scrolling Strip Section
-const ScrollingStrip = styled.div`
-  width: 100%;
-  height: 80px;
-  background: #000;
-  overflow: hidden;
-  position: relative;
-  
-  @media (max-width: 768px) {
-    height: 60px;
-  }
-  
-  @media (max-width: 480px) {
-    height: 50px;
-  }
-`;
 
-const ScrollingContent = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: url('"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849111/scrollimg.png"') repeat-x;
-  background-size: auto 100%;
-  animation: scroll-left 20s linear infinite;
-  width: 200%;
-  
-  @keyframes scroll-left {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-`;
 
 // Popular Products Section
 const PopularSection = styled.section<{ $isVisible?: boolean }>`
@@ -1507,6 +1446,59 @@ const faqData = [
   }
 ];
 
+// Marquee Animation
+const marqueeAnimation = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+`;
+
+const MarqueeStrip = styled.div`
+  width: 100%;
+  height: 80px;
+  background: #000;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    height: 60px;
+  }
+`;
+
+const MarqueeContent = styled.div`
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200%;
+  background: url('https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849111/scrollimg.png') repeat-x;
+  background-size: contain;
+  animation: ${marqueeAnimation} 15s linear infinite;
+  will-change: transform;
+`;
+
+const BrandLogo = styled.img`
+  height: 40px;
+  margin: 0 30px;
+  filter: brightness(0) invert(1); // Makes logos white
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  @media (max-width: 768px) {
+    height: 30px;
+    margin: 0 20px;
+  }
+`;
+
 const HomePage: React.FC = () => {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState<{ [key: string]: boolean }>({});
@@ -1606,7 +1598,7 @@ const HomePage: React.FC = () => {
     const video = videoRef.current;
     if (video) {
       // Set video source directly as fallback
-      video.src = "/images/bg.mp4";
+      video.src = '"https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"';
       
       const playVideo = async () => {
         try {
@@ -1669,20 +1661,12 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <HeroSection>
         <HeroVideoContainer>
-          <VideoBg 
-            ref={videoRef}
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            preload="metadata"
-            poster=""
-            onLoadedData={() => console.log('Video loaded')}
-            onError={(e) => console.error('Video error:', e)}
-          >
-            <source src="/images/bg.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </VideoBg>
+          <BackgroundVideo
+            src="https://player.cloudinary.com/embed/?cloud_name=dvy87ylmu&public_id=bg&profile=cld-default&autoplay=1&muted=1&loop=1&controls=0&showinfo=0&background=1&mute_on_start=1&quality=1080p&quality_mode=auto"
+            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+          />
         </HeroVideoContainer>
         <HeroOverlay />
         <HeroContent>
@@ -1706,10 +1690,10 @@ const HomePage: React.FC = () => {
         </HeroContent>
       </HeroSection>
 
-      {/* Scrolling Strip */}
-      <ScrollingStrip>
-        <ScrollingContent />
-      </ScrollingStrip>
+      {/* Brands Marquee */}
+      <MarqueeStrip>
+        <MarqueeContent />
+      </MarqueeStrip>
 
       {/* Popular Products Section */}
       <PopularSection ref={popularSectionRef} $isVisible={isVisible['popular-section']}>
