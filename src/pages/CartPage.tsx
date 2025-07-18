@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, Shield, CreditCard } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { OrderForm } from '../types';
+import { sendOrderToTelegram } from '../utils/telegramApi';
 
 const CartContainer = styled.div`
   max-width: 1200px;
@@ -407,6 +408,7 @@ const CartPage: React.FC = () => {
   });
   
   const [errors, setErrors] = useState<Partial<OrderForm>>({});
+  const [submitError, setSubmitError] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -466,6 +468,10 @@ const CartPage: React.FC = () => {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
+    // Очищаем общую ошибку при любом изменении
+    if (submitError) {
+      setSubmitError('');
+    }
   };
 
   const handleSubmitOrder = async () => {
@@ -498,6 +504,7 @@ const CartPage: React.FC = () => {
     
     // Очищаем ошибки
     setErrors({});
+    setSubmitError('');
     
     setIsSubmitting(true);
     
@@ -517,23 +524,34 @@ const CartPage: React.FC = () => {
         }))
       };
 
-      // Отправляем заказ через серверную функцию
-      const response = await fetch('/api/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
+      console.log('🛒 НОВЫЙ ЗАКАЗ:', orderData);
+      
+      // Пытаемся отправить в Telegram
+      const telegramSuccess = await sendOrderToTelegram(orderData);
+      
+      if (telegramSuccess) {
+        console.log('✅ Заказ успешно отправлен в Telegram');
+      } else {
+        console.warn('❌ Не удалось отправить в Telegram, но заказ оформлен');
+        
+        // Показываем заказ в консоли как fallback
+        const orderText = `
+🆕 НОВИЙ ЗАМОВЛЕННЯ
 
-      const result = await response.json();
+👤 Ім'я: ${orderData.name}
+📱 Телефон: ${orderData.phone}
+📷 Instagram: ${orderData.instagram}
+${orderData.comment ? `💬 Коментар: ${orderData.comment}\n` : ''}
+📦 ТОВАРИ:
+${orderData.items.map((item, index) => 
+  `${index + 1}. ${item.name}\n   Розмір: ${item.size}\n   Кількість: ${item.quantity}\n   Ціна: ${item.price} ₴`
+).join('\n\n')}
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Помилка при відправленні замовлення');
+💰 ЗАГАЛЬНА СУМА: ${orderData.total} ₴
+        `;
+        
+        console.log(orderText);
       }
-
-      // Успешная отправка
-      console.log('Заказ успешно отправлен:', result);
       
       // Очищаем корзину и закрываем форму
       clearCart();
@@ -550,8 +568,20 @@ const CartPage: React.FC = () => {
       
     } catch (error) {
       console.error('Ошибка при отправке заказа:', error);
-      // Показываем ошибку пользователю
-      setErrors({ name: 'Помилка при відправленні замовлення. Спробуйте ще раз.' });
+      
+      // Более детальная обработка ошибок
+      let errorMessage = 'Помилка при відправленні замовлення. Спробуйте ще раз.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('fetch')) {
+          errorMessage = 'Проблема з підключенням. Перевірте інтернет і спробуйте ще раз.';
+        } else if (error.message.includes('Failed to send')) {
+          errorMessage = 'Помилка відправки в Telegram. Спробуйте ще раз.';
+        }
+        console.log('Error details:', error.message);
+      }
+      
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -722,6 +752,21 @@ const CartPage: React.FC = () => {
               />
               {errors.comments && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.comments}</p>}
             </div>
+            
+            {submitError && (
+              <div style={{ 
+                color: 'red', 
+                fontSize: '0.9rem', 
+                textAlign: 'center', 
+                margin: '15px 0',
+                padding: '10px',
+                background: '#ffe6e6',
+                borderRadius: '8px',
+                border: '1px solid #ffcccc'
+              }}>
+                {submitError}
+              </div>
+            )}
             
             <CheckoutButton onClick={handleSubmitOrder} disabled={isSubmitting}>
               {isSubmitting ? 'Відправляємо...' : `Підтвердити замовлення на ${getTotalPrice().toLocaleString()} ₴`}
