@@ -1544,6 +1544,7 @@ const HomePage: React.FC = () => {
   const aboutSectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoError, setVideoError] = useState(false);
+  const [videoAttempts, setVideoAttempts] = useState(0);
 
   // Get popular products from custom sneakers (first 8 products)
   const customSneakers = products.filter(product => 
@@ -1633,7 +1634,13 @@ const HomePage: React.FC = () => {
       if (video && video.paused) {
         video.play().catch(e => {
           console.error('Video play failed:', e);
-          setVideoError(true);
+          if (videoAttempts < 2) {
+            setVideoAttempts(prev => prev + 1);
+            // Try reloading the video
+            video.load();
+          } else {
+            setVideoError(true);
+          }
         });
       }
     };
@@ -1645,7 +1652,7 @@ const HomePage: React.FC = () => {
       document.removeEventListener('click', handleUserInteraction);
       document.removeEventListener('touchstart', handleUserInteraction);
     };
-  }, []);
+  }, [videoAttempts]);
 
   // Set initial scroll position on mobile
   useEffect(() => {
@@ -1697,15 +1704,27 @@ const HomePage: React.FC = () => {
                 if (video) {
                   video.play().catch(e => {
                     console.error('Autoplay failed:', e);
-                    setVideoError(true);
+                    if (videoAttempts < 2) {
+                      setVideoAttempts(prev => prev + 1);
+                    } else {
+                      setVideoError(true);
+                    }
                   });
                 }
               }}
               onError={(e) => {
                 console.error('Video error:', e);
-                setVideoError(true);
+                if (videoAttempts < 2) {
+                  setVideoAttempts(prev => prev + 1);
+                  // Try reloading
+                  const video = e.target as HTMLVideoElement;
+                  setTimeout(() => video.load(), 1000);
+                } else {
+                  setVideoError(true);
+                }
               }}
             >
+              <source src="https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849111/bg.mp4" type="video/mp4" />
               <source src="/videos/bg.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </BackgroundVideo>
