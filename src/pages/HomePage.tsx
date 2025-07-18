@@ -1543,6 +1543,7 @@ const HomePage: React.FC = () => {
   const faqSectionRef = useRef<HTMLElement>(null);
   const aboutSectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoError, setVideoError] = useState(false);
 
   // Get popular products from custom sneakers (first 8 products)
   const customSneakers = products.filter(product => 
@@ -1625,37 +1626,25 @@ const HomePage: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Ensure video plays
+  // Force video play on user interaction
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      // Set video source directly as fallback
-      video.src = '"https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"';
-      
-      const playVideo = async () => {
-        try {
-          await video.play();
-          console.log('Video is playing');
-        } catch (error) {
-          console.log('Autoplay prevented:', error);
-          // Fallback: try to play on user interaction
-          const playOnInteraction = () => {
-            video.play();
-            document.removeEventListener('click', playOnInteraction);
-            document.removeEventListener('touchstart', playOnInteraction);
-          };
-          document.addEventListener('click', playOnInteraction);
-          document.addEventListener('touchstart', playOnInteraction);
-        }
-      };
+    const handleUserInteraction = () => {
+      const video = document.querySelector('video');
+      if (video && video.paused) {
+        video.play().catch(e => {
+          console.error('Video play failed:', e);
+          setVideoError(true);
+        });
+      }
+    };
 
-      video.addEventListener('loadeddata', playVideo);
-      video.load(); // Force reload
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
 
-      return () => {
-        video.removeEventListener('loadeddata', playVideo);
-      };
-    }
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+    };
   }, []);
 
   // Set initial scroll position on mobile
@@ -1693,21 +1682,37 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <HeroSection>
         <HeroVideoContainer>
-          <VideoFallback />
-          <BackgroundVideo
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg"
-            onLoadStart={() => console.log('Video loading started')}
-            onLoadedData={() => console.log('Video loaded')}
-            onError={(e) => console.error('Video error:', e)}
-          >
-            <source src="/videos/bg.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </BackgroundVideo>
+          {!videoError && (
+            <BackgroundVideo
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onLoadStart={() => console.log('Video loading started')}
+              onLoadedData={() => console.log('Video loaded')}
+              onCanPlay={() => {
+                console.log('Video can play');
+                const video = document.querySelector('video') as HTMLVideoElement;
+                if (video) {
+                  video.play().catch(e => {
+                    console.error('Autoplay failed:', e);
+                    setVideoError(true);
+                  });
+                }
+              }}
+              onError={(e) => {
+                console.error('Video error:', e);
+                setVideoError(true);
+              }}
+            >
+              <source src="/videos/bg.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </BackgroundVideo>
+          )}
+          {videoError && (
+            <VideoFallback />
+          )}
         </HeroVideoContainer>
         <HeroOverlay />
         <HeroContent>
