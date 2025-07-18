@@ -457,10 +457,10 @@ const ContactPage: React.FC = () => {
           </InfoItem>
           
           <SocialLinks>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/legitdelivery.ua/" target="_blank" rel="noopener noreferrer">
               <Instagram size={24} />
             </a>
-            <a href="https://t.me" target="_blank" rel="noopener noreferrer">
+            <a href="https://t.me/legitdelivery_ua" target="_blank" rel="noopener noreferrer">
               <MessageCircle size={24} />
             </a>
           </SocialLinks>
