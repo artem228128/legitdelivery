@@ -455,7 +455,7 @@ const AboutPage: React.FC = () => {
             <div className="phone-frame">
               <div className="phone-screen">
                 <img 
-                  src="/images/telepon.png" 
+                  src="http://res.cloudinary.com/dvy87ylmu/image/upload/v1752869540/a7507hitjp1j30sdhj3v.png" 
                   alt="LegitDelivery Instagram" 
                   className="instagram-screenshot"
                 />
@@ -536,7 +536,7 @@ const AboutPage: React.FC = () => {
           </MissionText>
           
           <MissionImage>
-            <img src="/images/travis.png" alt="LegitDelivery" />
+            <img src="http://res.cloudinary.com/dvy87ylmu/image/upload/v1752869534/egvl79ttla3ttyqb9dks.png" alt="LegitDelivery" />
           </MissionImage>
         </MissionSection>
       </Section>
