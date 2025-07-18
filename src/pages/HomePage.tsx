@@ -481,7 +481,7 @@ const ScrollingContent = styled.div`
   top: 0;
   left: 0;
   height: 100%;
-  background: url('/images/scrollimg.png') repeat-x;
+  background: url('"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849111/scrollimg.png"') repeat-x;
   background-size: auto 100%;
   animation: scroll-left 20s linear infinite;
   width: 200%;
@@ -1566,7 +1566,7 @@ const HomePage: React.FC = () => {
     const video = videoRef.current;
     if (video) {
       // Set video source directly as fallback
-      video.src = '/images/bg.mp4';
+      video.src = '"https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"';
       
       const playVideo = async () => {
         try {
@@ -1640,7 +1640,7 @@ const HomePage: React.FC = () => {
             onLoadedData={() => console.log('Video loaded')}
             onError={(e) => console.error('Video error:', e)}
           >
-            <source src="/images/bg.mp4" type="video/mp4" />
+            <source src=""https://res.cloudinary.com/dvy87ylmu/video/upload/v1752849081/bg.mp4"" type="video/mp4" />
             Your browser does not support the video tag.
           </VideoBg>
         </HeroVideoContainer>
@@ -1754,7 +1754,7 @@ const HomePage: React.FC = () => {
             </AboutCommunity>
           </AboutContent>
           <AboutImage $delay={0.6} $isVisible={isVisible['about-section']}>
-            <img src="/images/aboutus.JPG" alt="Legitdelivery About" />
+            <img src=""https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849075/aboutus.jpg"" alt="Legitdelivery About" />
           </AboutImage>
         </AboutContainer>
       </AboutSection>

@@ -30,7 +30,7 @@ const categories = [
   },
   {
     label: 'Футболки',
-    image: '/images/categories_grid/tshirts.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849083/categories_grid/tshirts.jpg"',
     link: '/catalog?category=tshirts',
   },
   {

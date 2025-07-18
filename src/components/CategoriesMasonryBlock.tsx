@@ -7,7 +7,7 @@ const categories = [
   {
     id: 'featured',
     label: 'NEW RELEASES',
-    image: '/images/categories_masonry/featured.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849090/categories_masonry/featured.jpg"',
     link: '/catalog?filter=new',
     type: 'large'
   },
@@ -15,28 +15,28 @@ const categories = [
   {
     id: 'sneakers',
     label: 'Кросівки',
-    image: '/images/categories_masonry/sneakers.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849093/categories_masonry/sneakers.jpg"',
     link: '/catalog?category=sneakers',
     type: 'square'
   },
   {
     id: 'bags',
     label: 'Сумки',
-    image: '/images/categories_masonry/bags.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849086/categories_masonry/bags.jpg"',
     link: '/catalog?category=bags',
     type: 'square'
   },
   {
     id: 'tshirts',
     label: 'Футболки',
-    image: '/images/categories_masonry/tshirts.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849094/categories_masonry/tshirts.jpg"',
     link: '/catalog?category=tshirts',
     type: 'square'
   },
   {
     id: 'accessories',
     label: 'Аксесуари',
-    image: '/images/categories_masonry/accessories.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849086/categories_masonry/accessories.png"',
     link: '/catalog?category=accessories',
     type: 'square'
   },
@@ -44,21 +44,21 @@ const categories = [
   {
     id: 'outerwear',
     label: 'Верхній одяг',
-    image: '/images/categories_masonry/outerwear.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849092/categories_masonry/outerwear.png"',
     link: '/catalog?category=outerwear',
     type: 'horizontal'
   },
   {
     id: 'brands',
     label: 'ПРЕМІУМ БРЕНДИ',
-    image: '/images/categories_masonry/brands.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849089/categories_masonry/brands.png"',
     link: '/catalog?filter=premium',
     type: 'horizontal'
   },
   {
     id: 'hoodies',
     label: 'Худі/світшоти',
-    image: '/images/categories_masonry/hoodies.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849091/categories_masonry/hoodies.png"',
     link: '/catalog?category=hoodies',
     type: 'horizontal'
   }

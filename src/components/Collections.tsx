@@ -264,19 +264,19 @@ const initialCollections = [
   {
     id: 'nike-dunk-low',
     title: 'NIKE DUNK LOW',
-    image: '/images/collections/nike-dunk-low.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849108/collections/nike-dunk-low.png"',
     link: '/catalog?filter=dunk'
   },
   {
     id: 'new-balance',
     title: 'NEW BALANCE',
-    image: '/images/collections/new-balance.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849107/collections/new-balance.jpg"',
     link: '/catalog?brand=New Balance'
   },
   {
     id: 'air-jordan-1-low',
     title: 'AIR JORDAN 1 LOW',
-    image: '/images/collections/air-jordan-1-low.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849098/collections/air-jordan-1-low.jpg"',
     link: '/catalog?model=Air Jordan 1 Low'
   }
 ];
@@ -285,55 +285,55 @@ const hiddenCollections = [
   {
     id: 'air-jordan-3',
     title: 'AIR JORDAN 3',
-    image: '/images/collections/air-jordan-3.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849102/collections/air-jordan-3.jpg"',
     link: '/catalog?model=Air Jordan 3'
   },
   {
     id: 'air-jordan-4',
     title: 'AIR JORDAN 4',
-    image: '/images/collections/air-jordan-4.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849103/collections/air-jordan-4.jpg"',
     link: '/catalog?model=Air Jordan 4'
   },
   {
     id: 'air-jordan-5',
     title: 'AIR JORDAN 5',
-    image: '/images/collections/air-jordan-5.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849105/collections/air-jordan-5.png"',
     link: '/catalog?model=Air Jordan 5'
   },
   {
     id: 'air-jordan-1-mid',
     title: 'AIR JORDAN 1 MID',
-    image: '/images/collections/air-jordan-1-mid.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849100/collections/air-jordan-1-mid.png"',
     link: '/catalog?model=Air Jordan 1 Mid'
   },
   {
     id: 'air-jordan-1-high',
     title: 'AIR JORDAN 1 HIGH',
-    image: '/images/collections/air-jordan-1-high.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849098/collections/air-jordan-1-high.jpg"',
     link: '/catalog?model=Air Jordan 1 High'
   },
   {
     id: 'air-force-1-low',
     title: 'AIR FORCE 1 LOW',
-    image: '/images/collections/air-force-1-low.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849097/collections/air-force-1-low.jpg"',
     link: '/catalog?model=Air Force 1 Low'
   },
   {
     id: 'off-white',
     title: 'OFF WHITE',
-    image: '/images/collections/off-white.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849109/collections/off-white.jpg"',
     link: '/catalog?brand=Off-White'
   },
   {
     id: 'salomon',
     title: 'SALOMON',
-    image: '/images/collections/salomon.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849110/collections/salomon.jpg"',
     link: '/catalog?brand=Salomon'
   },
   {
     id: 'adidas-yeezy',
     title: 'ADIDAS YEEZY',
-    image: '/images/collections/adidas-yeezy.jpg',
+    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849096/collections/adidas-yeezy.jpg"',
     link: '/catalog?brand=Adidas&model=Yeezy'
   }
 ];
