@@ -436,7 +436,7 @@ const SizeButton = styled.button<{ active: boolean }>`
     min-height: 36px;
   }
   
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: var(--primary-blue);
   }
   
@@ -445,6 +445,7 @@ const SizeButton = styled.button<{ active: boolean }>`
     border-color: var(--border-light);
     color: var(--text-light);
     cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
@@ -685,6 +686,9 @@ const ProductPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [iconSize, setIconSize] = useState(22);
 
+  // Все возможные размеры обуви
+  const allSizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
+
   useEffect(() => {
     if (id) {
       const foundProduct = getProductById(id);
@@ -825,7 +829,7 @@ const ProductPage: React.FC = () => {
           <OptionsSection>
             <h3>Розмір</h3>
             <SizeOptions>
-              {product.sizes.map(size => (
+              {allSizes.map(size => (
                 <SizeButton
                   key={size}
                   active={selectedSize === size}

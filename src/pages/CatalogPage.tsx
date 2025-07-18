@@ -213,6 +213,7 @@ const PriceRange = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
   
   input {
     width: 80px;
@@ -220,6 +221,47 @@ const PriceRange = styled.div`
     border: 1px solid var(--border-light);
     border-radius: 4px;
     text-align: center;
+    font-size: 0.9rem;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--primary-yellow);
+    }
+  }
+  
+  .apply-price {
+    background: var(--primary-yellow);
+    border: none;
+    color: var(--text-dark);
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    
+    &:hover {
+      background: #FFE55C;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  
+  .reset-price {
+    background: none;
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    
+    &:hover {
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
   }
 `;
 
@@ -478,6 +520,12 @@ const CatalogPage: React.FC = () => {
     sizes: [],
     inStock: true
   });
+  
+  // Состояние для отображения в инпутах
+  const [priceInputs, setPriceInputs] = useState({
+    min: '',
+    max: ''
+  });
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   
   const [sortBy, setSortBy] = useState<SortOptions>({
@@ -534,10 +582,10 @@ const CatalogPage: React.FC = () => {
     }
     
     // Price range filter
-    if (filters.priceRange) {
+    if (filters.priceRange && filters.priceRange.length === 2) {
+      const [minPrice, maxPrice] = filters.priceRange;
       filtered = filtered.filter(product => 
-        product.price >= filters.priceRange![0] && 
-        product.price <= filters.priceRange![1]
+        product.price >= minPrice && product.price <= maxPrice
       );
     }
     
@@ -613,6 +661,18 @@ const CatalogPage: React.FC = () => {
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
     setFilters(prev => {
+      if (key === 'priceRange') {
+        // Специальная обработка для диапазона цен
+        const [min, max] = value;
+        const minPrice = isNaN(min) ? 0 : Math.max(0, min);
+        const maxPrice = isNaN(max) ? 25000 : Math.max(minPrice, max);
+        
+        return {
+          ...prev,
+          priceRange: [minPrice, maxPrice]
+        };
+      }
+      
       if (Array.isArray(prev[key])) {
         const array = prev[key] as any[];
         const newArray = array.includes(value)
@@ -647,6 +707,7 @@ const CatalogPage: React.FC = () => {
       sizes: [],
       inStock: true
     });
+    setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
     setSearchParams({});
   }, [setSearchParams]);
@@ -664,7 +725,7 @@ const CatalogPage: React.FC = () => {
   }, []);
 
   const categories = ['Кроссовки', 'Одежда', 'Аксессуары'];
-  const sizes = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', 'S', 'M', 'L', 'XL', 'XXL'];
+  const sizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
 
   const [openSections, setOpenSections] = useState({
     categories: false,
@@ -682,7 +743,8 @@ const CatalogPage: React.FC = () => {
       filters.brands.length > 0 ||
       filters.models.length > 0 ||
       (filters.sizes && filters.sizes.length > 0) ||
-      (filters.priceRange && (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 25000)) ||
+      (filters.priceRange && filters.priceRange.length === 2 && 
+       (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 25000)) ||
       searchParams.get('search') ||
       searchParams.get('filter') ||
       showFavoritesOnly
@@ -788,17 +850,41 @@ const CatalogPage: React.FC = () => {
                 <PriceRange>
                   <input
                     type="number"
-                    value={filters.priceRange![0]}
-                    onChange={(e) => handleFilterChange('priceRange', [parseInt(e.target.value), filters.priceRange![1]])}
+                    value={priceInputs.min}
+                    onChange={(e) => setPriceInputs(prev => ({ ...prev, min: e.target.value }))}
                     placeholder="Від"
+                    min="0"
                   />
                   <span>-</span>
                   <input
                     type="number"
-                    value={filters.priceRange![1]}
-                    onChange={(e) => handleFilterChange('priceRange', [filters.priceRange![0], parseInt(e.target.value)])}
+                    value={priceInputs.max}
+                    onChange={(e) => setPriceInputs(prev => ({ ...prev, max: e.target.value }))}
                     placeholder="До"
+                    min="0"
                   />
+                  <button 
+                    className="apply-price"
+                    onClick={() => {
+                      const minValue = parseInt(priceInputs.min) || 0;
+                      const maxValue = parseInt(priceInputs.max) || 25000;
+                      handleFilterChange('priceRange', [minValue, maxValue]);
+                    }}
+                    disabled={!priceInputs.min && !priceInputs.max}
+                  >
+                    Применить
+                  </button>
+                  {(filters.priceRange![0] !== 0 || filters.priceRange![1] !== 25000) && (
+                    <button 
+                      className="reset-price"
+                      onClick={() => {
+                        handleFilterChange('priceRange', [0, 25000]);
+                        setPriceInputs({ min: '', max: '' });
+                      }}
+                    >
+                      Скинути
+                    </button>
+                  )}
                 </PriceRange>
               </Collapsible>
             </FilterSection>
