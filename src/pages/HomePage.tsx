@@ -1493,7 +1493,7 @@ const MarqueeStrip = styled.div`
   align-items: center;
   
   @media (max-width: 768px) {
-    height: 60px;
+    height: 60legitdeliveryua@gmail.compx;
     margin: 0;
     padding: 0;
   }

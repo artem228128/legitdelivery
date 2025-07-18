@@ -11,6 +11,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import DeliveryPage from './pages/DeliveryPage';
 import WarrantyPage from './pages/WarrantyPage';
+import UserAgreementPage from './pages/UserAgreementPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -91,6 +92,7 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/payment-delivery" element={<DeliveryPage />} />
               <Route path="/warranty" element={<WarrantyPage />} />
+              <Route path="/user-agreement" element={<UserAgreementPage />} />
             </Routes>
           </MainContent>
           <Footer />
