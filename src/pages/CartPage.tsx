@@ -241,10 +241,17 @@ const CheckoutButton = styled.button`
   transition: all 0.3s ease;
   margin-top: 20px;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: #4169E1;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(30, 144, 255, 0.3);
+  }
+  
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 `;
 
@@ -400,6 +407,7 @@ const CartPage: React.FC = () => {
   });
   
   const [errors, setErrors] = useState<Partial<OrderForm>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   // Функция форматирования телефона
@@ -460,7 +468,7 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     const newErrors: Partial<OrderForm> = {};
     
     // Проверяем, что заполнены все обязательные поля
@@ -491,21 +499,62 @@ const CartPage: React.FC = () => {
     // Очищаем ошибки
     setErrors({});
     
-    // Здесь можно добавить логику отправки заказа
-    console.log('Заказ отправлен:', orderForm);
+    setIsSubmitting(true);
     
-    // Очищаем корзину и закрываем форму
-    clearCart();
-    setShowCheckout(false);
-    setOrderForm({
-      name: '',
-      phone: '+380',
-      instagram: '',
-      comments: ''
-    });
-    
-    // Редирект на страницу успеха
-    navigate('/order-success');
+    try {
+      // Подготавливаем данные для отправки
+      const orderData = {
+        name: orderForm.name,
+        phone: orderForm.phone,
+        instagram: orderForm.instagram,
+        comment: orderForm.comments,
+        total: getTotalPrice(),
+        items: items.map(item => ({
+          name: item.product.name,
+          size: item.size,
+          quantity: item.quantity,
+          price: item.product.price
+        }))
+      };
+
+      // Отправляем заказ через серверную функцию
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Помилка при відправленні замовлення');
+      }
+
+      // Успешная отправка
+      console.log('Заказ успешно отправлен:', result);
+      
+      // Очищаем корзину и закрываем форму
+      clearCart();
+      setShowCheckout(false);
+      setOrderForm({
+        name: '',
+        phone: '+380',
+        instagram: '',
+        comments: ''
+      });
+      
+      // Редирект на страницу успеха
+      navigate('/order-success');
+      
+    } catch (error) {
+      console.error('Ошибка при отправке заказа:', error);
+      // Показываем ошибку пользователю
+      setErrors({ name: 'Помилка при відправленні замовлення. Спробуйте ще раз.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
@@ -674,8 +723,8 @@ const CartPage: React.FC = () => {
               {errors.comments && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.comments}</p>}
             </div>
             
-            <CheckoutButton onClick={handleSubmitOrder}>
-              Підтвердити замовлення на {getTotalPrice().toLocaleString()} ₴
+            <CheckoutButton onClick={handleSubmitOrder} disabled={isSubmitting}>
+              {isSubmitting ? 'Відправляємо...' : `Підтвердити замовлення на ${getTotalPrice().toLocaleString()} ₴`}
             </CheckoutButton>
           </div>
         </CheckoutForm>
