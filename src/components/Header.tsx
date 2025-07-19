@@ -379,8 +379,8 @@ const Header: React.FC = () => {
             </DropdownMenu>
           </CatalogDropdownWrapper>
           <NavLink to="/size-guide" $isHomePage={isHomePage}>Розмір</NavLink>
+          <NavLink to="/tracking" $isHomePage={isHomePage}>Відстеження</NavLink>
           <NavLink to="/about" $isHomePage={isHomePage}>Про нас</NavLink>
-          <NavLink to="/contact" $isHomePage={isHomePage}>Контакти</NavLink>
         </Navigation>
         
         <SearchContainer>
@@ -457,8 +457,8 @@ const Header: React.FC = () => {
             </div>
           )}
           <MobileNavLink to="/size-guide" onClick={closeMenu}>Розмір</MobileNavLink>
+          <MobileNavLink to="/tracking" onClick={closeMenu}>Відстеження</MobileNavLink>
           <MobileNavLink to="/about" onClick={closeMenu}>Про нас</MobileNavLink>
-          <MobileNavLink to="/contact" onClick={closeMenu}>Контакти</MobileNavLink>
         
         <MobileSearchContainer>
           <form onSubmit={handleSearch}>

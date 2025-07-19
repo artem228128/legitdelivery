@@ -15,6 +15,7 @@ import WarrantyPage from './pages/WarrantyPage';
 import UserAgreementPage from './pages/UserAgreementPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import SizeGuidePage from './pages/SizeGuidePage';
+import TrackingPage from './pages/TrackingPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -99,6 +100,7 @@ function App() {
               <Route path="/user-agreement" element={<UserAgreementPage />} />
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/size-guide" element={<SizeGuidePage />} />
+              <Route path="/tracking" element={<TrackingPage />} />
             </Routes>
           </MainContent>
           <Footer />

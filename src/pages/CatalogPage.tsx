@@ -900,7 +900,7 @@ const CatalogPage: React.FC = () => {
                     }}
                     disabled={!priceInputs.min && !priceInputs.max}
                   >
-                    Применить
+                    Застосувати
                   </button>
                   {(filters.priceRange![0] !== 0 || filters.priceRange![1] !== 25000) && (
                     <button 
