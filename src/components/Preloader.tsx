@@ -77,12 +77,15 @@ const slideInOut = keyframes`
   }
 `;
 
-const wave = keyframes`
-  0%, 100% { 
-    transform: scaleY(1);
+const synchronizedWave = keyframes`
+  0% { 
+    transform: scaleY(0);
   }
   50% { 
-    transform: scaleY(1.5);
+    transform: scaleY(1);
+  }
+  100% { 
+    transform: scaleY(0);
   }
 `;
 
@@ -98,7 +101,7 @@ const PreloaderWrapper = styled.div<{ $isVisible: boolean }>`
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  animation: ${props => !props.$isVisible ? fadeOut : 'none'} 0.8s ease-in-out forwards;
+  animation: ${props => !props.$isVisible ? fadeOut : 'none'} 0.5s ease-in-out forwards;
   overflow: hidden;
 `;
 
@@ -121,7 +124,7 @@ const Logo = styled.div`
   color: #000;
   font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
   letter-spacing: -0.05em;
-  animation: ${pulse} 3s ease-in-out infinite;
+  animation: ${pulse} 2s ease-in-out infinite;
   text-transform: uppercase;
   position: relative;
   
@@ -159,7 +162,7 @@ const MorphingShape = styled.div`
   width: 80px;
   height: 80px;
   background: linear-gradient(45deg, #000 0%, #333 50%, #000 100%);
-  animation: ${morphing} 4s ease-in-out infinite;
+  animation: ${morphing} 2.5s ease-in-out infinite;
   position: absolute;
 `;
 
@@ -175,7 +178,7 @@ const Dot = styled.div<{ $delay: number; $size: number }>`
   height: ${props => props.$size}px;
   background: #000;
   border-radius: 50%;
-  animation: ${float} 3s ease-in-out infinite;
+  animation: ${float} 2s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   
   &:nth-child(1) {
@@ -221,7 +224,7 @@ const LoadingText = styled.div`
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(0,0,0,0.2), transparent);
-    animation: ${slideInOut} 2s ease-in-out infinite;
+    animation: ${slideInOut} 1.5s ease-in-out infinite;
   }
   
   @media (max-width: 768px) {
@@ -257,7 +260,7 @@ const ProgressSegment = styled.div<{ $delay: number }>`
   background: #000;
   transform: scaleY(0);
   transform-origin: center;
-  animation: ${wave} 1.5s ease-in-out infinite;
+  animation: ${synchronizedWave} 1.2s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
 `;
 
@@ -279,7 +282,7 @@ const GridDot = styled.div<{ $x: number; $y: number; $delay: number }>`
   border-radius: 50%;
   left: ${props => props.$x}%;
   top: ${props => props.$y}%;
-  animation: ${pulse} 4s ease-in-out infinite;
+  animation: ${pulse} 3s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
 `;
 
@@ -301,7 +304,7 @@ const Preloader: React.FC<PreloaderProps> = ({ isVisible, progress = 0 }) => {
         key={i}
         $x={Math.random() * 100}
         $y={Math.random() * 100}
-        $delay={Math.random() * 2}
+        $delay={Math.random() * 1.5}
       />
     );
   }
@@ -321,9 +324,9 @@ const Preloader: React.FC<PreloaderProps> = ({ isVisible, progress = 0 }) => {
           <MorphingShape />
           <FloatingDots>
             <Dot $delay={0} $size={8} />
-            <Dot $delay={0.5} $size={6} />
-            <Dot $delay={1} $size={8} />
-            <Dot $delay={1.5} $size={6} />
+            <Dot $delay={0.3} $size={6} />
+            <Dot $delay={0.6} $size={8} />
+            <Dot $delay={0.9} $size={6} />
           </FloatingDots>
         </AnimationContainer>
         
@@ -332,7 +335,7 @@ const Preloader: React.FC<PreloaderProps> = ({ isVisible, progress = 0 }) => {
         <ProgressContainer>
           <ProgressBar>
             {Array.from({ length: 20 }).map((_, i) => (
-              <ProgressSegment key={i} $delay={i * 0.1} />
+              <ProgressSegment key={i} $delay={i * 0.06} />
             ))}
           </ProgressBar>
         </ProgressContainer>

@@ -228,18 +228,18 @@ const AboutText = styled.div`
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
+  gap: 40px;
   margin: 30px 0;
   
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 25px;
     margin: 20px 0;
   }
   
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 20px;
   }
 `;
 

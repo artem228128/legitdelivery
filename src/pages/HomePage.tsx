@@ -255,18 +255,18 @@ const HeroStats = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
+  gap: 3.5rem;
   margin-top: 1rem;
   animation: ${fadeInUp} 1s ease-out 0.5s;
   animation-fill-mode: both;
   
   @media (max-width: 768px) {
-    gap: 1.5rem;
+    gap: 2.5rem;
     flex-wrap: wrap;
   }
   
   @media (max-width: 480px) {
-    gap: 1rem;
+    gap: 2rem;
     flex-direction: column;
   }
 `;
@@ -1071,13 +1071,13 @@ const StatsSection = styled.section`
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
+  gap: 60px;
   max-width: 1000px;
   margin: 0 auto;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 45px;
   }
 `;
 

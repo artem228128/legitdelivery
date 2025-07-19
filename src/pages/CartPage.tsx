@@ -769,7 +769,7 @@ ${orderData.items.map((item, index) =>
             )}
             
             <CheckoutButton onClick={handleSubmitOrder} disabled={isSubmitting}>
-              {isSubmitting ? 'Відправляємо...' : `Підтвердити замовлення на ${getTotalPrice().toLocaleString()} ₴`}
+              {isSubmitting ? 'Відправляємо...' : 'Оформити замовлення'}
             </CheckoutButton>
           </div>
         </CheckoutForm>
