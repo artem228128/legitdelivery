@@ -534,9 +534,23 @@ const CatalogPage: React.FC = () => {
   });
 
   // Update the models array to only include non-null values
-  const models = Array.from(new Set(products
+  const allModels = Array.from(new Set(products
     .map(p => p.model)
     .filter((model): model is string => model !== undefined && model !== null)));
+
+  // Filter models based on selected brands
+  const filteredModels = useMemo(() => {
+    if (filters.brands.length === 0) {
+      return allModels;
+    }
+    
+    return Array.from(new Set(products
+      .filter(product => filters.brands.includes(product.brand))
+      .map(p => p.model)
+      .filter((model): model is string => model !== undefined && model !== null)));
+  }, [filters.brands]);
+
+  const models = filteredModels;
 
   // Мемоизированная фильтрация продуктов
   const filteredProducts = useMemo(() => {
@@ -670,6 +684,20 @@ const CatalogPage: React.FC = () => {
         return {
           ...prev,
           priceRange: [minPrice, maxPrice]
+        };
+      }
+      
+      if (key === 'brands') {
+        // При изменении бренда сбрасываем модели
+        const array = prev[key] as any[];
+        const newArray = array.includes(value)
+          ? array.filter(item => item !== value)
+          : [...array, value];
+        
+        return {
+          ...prev,
+          [key]: newArray,
+          models: [] // Сбрасываем выбранные модели
         };
       }
       
