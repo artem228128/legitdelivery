@@ -82,11 +82,12 @@ const isHitProduct = (title: string, brand: string): boolean => {
   
   const hitKeywords = [
     'jordan 1', 'jordan 4', 'air max', 'air force', 'yeezy', 'dunk', 
-    'off-white', 'travis scott', 'fragment', 'chicago', 'bred', 'royal'
+    'off-white', 'travis scott', 'fragment', 'chicago', 'bred', 'royal',
+    '1906', 'new balance'
   ];
   
   return hitKeywords.some(keyword => titleLower.includes(keyword)) ||
-         ['nike', 'adidas', 'air jordan'].includes(brandLower);
+         ['nike', 'adidas', 'air jordan', 'new balance'].includes(brandLower);
 };
 
 // Функция для преобразования ProductFromJSON в Product

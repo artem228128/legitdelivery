@@ -1767,7 +1767,7 @@ const HomePage: React.FC = () => {
           {visiblePopularProducts.map((product, index) => (
             <ProductCard key={product.id} $delay={index * 0.1}>
               <ProductImageContainer>
-                {product.isHit && <HitBadge>HIT</HitBadge>}
+                {product.isHit && <HitBadge>ТОП</HitBadge>}
                 <ProductImage src={product.image} alt={product.name} />
               </ProductImageContainer>
               <ProductInfo>

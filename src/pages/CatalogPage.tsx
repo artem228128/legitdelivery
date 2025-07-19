@@ -323,7 +323,7 @@ const ProductGrid = styled.div<{ view: 'grid' | 'list' }>`
   }
   
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: ${props => props.view === 'grid' ? 'repeat(2, 1fr)' : '1fr'};
     gap: 12px;
   }
 `;
@@ -1234,7 +1234,7 @@ const ScrollableOptions = styled.div`
   margin-bottom: 10px;
   
   @media (max-width: 480px) {
-    max-height: 120px;
+    max-height: 200px;
   }
 `;
 
