@@ -37,8 +37,17 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [items]);
 
   const showNotification = (message: string) => {
+    // Удаляем существующие уведомления
+    const existingNotifications = document.querySelectorAll('[data-notification="cart"]');
+    existingNotifications.forEach(notification => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    });
+    
     // Создаем уведомление
     const notification = document.createElement('div');
+    notification.setAttribute('data-notification', 'cart');
     notification.style.cssText = `
       position: fixed;
       top: 20px;
@@ -59,6 +68,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       margin: 0 auto;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
+      touch-action: pan-y;
+      user-select: none;
       
       @media (max-width: 768px) {
         top: 10px;
@@ -88,14 +99,70 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       notification.style.transform = 'translateY(0)';
     }, 100);
     
-    // Скрываем через 3 секунды
-    setTimeout(() => {
+    // Переменные для отслеживания свайпа
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+    
+    // Функция для скрытия уведомления
+    const hideNotification = () => {
       notification.style.transform = 'translateY(-100%)';
       setTimeout(() => {
         if (document.body.contains(notification)) {
           document.body.removeChild(notification);
         }
       }, 400);
+    };
+    
+    // Обработчики для свайпа на мобильных устройствах
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+      isDragging = true;
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+      
+      // Если свайп вверх больше 50px, скрываем уведомление
+      if (deltaY < -50) {
+        hideNotification();
+        isDragging = false;
+        return;
+      }
+      
+      // Ограничиваем движение вниз
+      if (deltaY > 0) {
+        notification.style.transform = `translateY(${Math.min(deltaY * 0.3, 20)}px)`;
+      }
+    };
+    
+    const handleTouchEnd = () => {
+      if (!isDragging) return;
+      
+      const deltaY = currentY - startY;
+      
+      // Если свайп вверх больше 30px, скрываем уведомление
+      if (deltaY < -30) {
+        hideNotification();
+      } else {
+        // Возвращаем уведомление на место
+        notification.style.transform = 'translateY(0)';
+      }
+      
+      isDragging = false;
+    };
+    
+    // Добавляем обработчики событий
+    notification.addEventListener('touchstart', handleTouchStart, { passive: true });
+    notification.addEventListener('touchmove', handleTouchMove, { passive: true });
+    notification.addEventListener('touchend', handleTouchEnd, { passive: true });
+    
+    // Скрываем через 3 секунды
+    setTimeout(() => {
+      hideNotification();
     }, 3000);
   };
 

@@ -142,48 +142,48 @@ const ImageGallery = styled.div`
 `;
 
 const ThumbnailImage = styled.div<{ bgImage: string; active: boolean }>`
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   background: url(${props => props.bgImage}) center no-repeat;
   background-size: contain;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   border: 3px solid ${props => props.active ? 'var(--primary-blue)' : 'transparent'};
   transition: all 0.3s ease;
   flex-shrink: 0;
   
   @media (max-width: 900px) {
-    width: 50px;
-    height: 50px;
-    border-radius: 6px;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
   }
   
   @media (max-width: 768px) {
-    width: 35px;
-    height: 35px;
-    border-radius: 4px;
-    border-width: 1px;
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    border-width: 2px;
   }
   
   @media (max-width: 600px) {
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
-    border-width: 1px;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    border-width: 2px;
   }
   
   @media (max-width: 480px) {
-    width: 28px;
-    height: 28px;
-    border-radius: 3px;
-    border-width: 1px;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border-width: 2px;
   }
   
   @media (max-width: 400px) {
-    width: 25px;
-    height: 25px;
-    border-radius: 2px;
+    width: 35px;
+    height: 35px;
+    border-radius: 3px;
     border-width: 1px;
   }
   
