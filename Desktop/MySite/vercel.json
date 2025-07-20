@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "mysite/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/mysite/build/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/mysite/build/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/mysite/build/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/mysite/build/index.html"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+} 

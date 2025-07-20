@@ -1,0 +1,16 @@
+{
+  "name": "legitdelivery-api",
+  "version": "1.0.0",
+  "description": "API for LegitDelivery tracking system",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd mysite && npm ci && npm run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.52.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  }
+} 
