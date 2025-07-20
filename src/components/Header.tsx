@@ -165,11 +165,11 @@ const MobileMenuButton = styled(IconButton)`
   }
 `;
 
-const MobileMenu = styled.div<{ isOpen: boolean }>`
+const MobileMenu = styled.div<{ $isOpen: boolean }>`
   display: none;
   
   @media (max-width: 768px) {
-    display: ${props => props.isOpen ? 'block' : 'none'};
+    display: ${props => props.$isOpen ? 'block' : 'none'};
     position: absolute;
     top: 80px;
     left: 0;
@@ -379,8 +379,8 @@ const Header: React.FC = () => {
             </DropdownMenu>
           </CatalogDropdownWrapper>
           <NavLink to="/size-guide" $isHomePage={isHomePage}>Розмір</NavLink>
-          <NavLink to="/tracking" $isHomePage={isHomePage}>Відстеження</NavLink>
           <NavLink to="/about" $isHomePage={isHomePage}>Про нас</NavLink>
+          <NavLink to="/contact" $isHomePage={isHomePage}>Контакты</NavLink>
         </Navigation>
         
         <SearchContainer>
@@ -410,7 +410,7 @@ const Header: React.FC = () => {
         </RightSection>
       </HeaderContent>
       
-              <MobileMenu isOpen={isMenuOpen}>
+              <MobileMenu $isOpen={isMenuOpen}>
           <MobileNavLink to="/" onClick={closeMenu}>Головна</MobileNavLink>
           <div onClick={() => setIsMobileCatalogOpen(v => !v)} style={{cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'15px 0',color:'white',fontWeight:500,borderBottom:'1px solid rgba(255,255,255,0.2)'}}>
             Каталог
@@ -457,8 +457,8 @@ const Header: React.FC = () => {
             </div>
           )}
           <MobileNavLink to="/size-guide" onClick={closeMenu}>Розмір</MobileNavLink>
-          <MobileNavLink to="/tracking" onClick={closeMenu}>Відстеження</MobileNavLink>
           <MobileNavLink to="/about" onClick={closeMenu}>Про нас</MobileNavLink>
+          <MobileNavLink to="/contact" onClick={closeMenu}>Контакты</MobileNavLink>
         
         <MobileSearchContainer>
           <form onSubmit={handleSearch}>

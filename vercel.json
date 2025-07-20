@@ -7,6 +7,10 @@
       "config": {
         "distDir": "build"
       }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -18,8 +22,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "GOOGLE_SHEETS_ID": "15LQwJJHEwVdnM6mtV6Ocf4u4zkNiclBXT4Uw39twzys"
-  }
+  ]
 } 

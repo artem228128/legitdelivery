@@ -109,7 +109,7 @@ const ContentContainer = styled.div`
   }
 `;
 
-const FilterSidebar = styled.div<{ isOpen: boolean }>`
+const FilterSidebar = styled.div<{ $isOpen: boolean }>`
   @media (max-width: 768px) {
     position: fixed;
     top: 0;
@@ -120,7 +120,7 @@ const FilterSidebar = styled.div<{ isOpen: boolean }>`
     z-index: 2000;
     padding: 20px;
     overflow-y: auto;
-    transform: ${props => props.isOpen ? 'translateX(0)' : 'translateX(-100%)'};
+    transform: ${props => props.$isOpen ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.3s ease;
     pointer-events: auto;
     
@@ -802,7 +802,7 @@ const CatalogPage: React.FC = () => {
       </Header>
       
       <ContentContainer>
-        <FilterSidebar isOpen={isFilterOpen}>
+        <FilterSidebar $isOpen={isFilterOpen}>
           <CloseButton onClick={() => setIsFilterOpen(false)}>
             <X size={24} />
           </CloseButton>

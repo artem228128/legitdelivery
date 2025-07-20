@@ -507,31 +507,27 @@ const TrackingPage: React.FC = () => {
     setShowResult(false);
     
     try {
-      // Запрос к нашему API серверу
-      const response = await fetch(`${API_BASE_URL}/tracking/${trackingNumber}`);
+      // Делаем запрос к API серверу
+      const response = await fetch(`${API_BASE_URL}/tracking?trackingId=${trackingNumber}`);
       const data = await response.json();
       
       if (!response.ok) {
-        if (response.status === 429) {
-          setError('Забагато запитів. Спробуйте пізніше.');
-        } else {
-          setError(data.error || 'Помилка при отриманні даних');
-        }
+        setError(data.error || 'Помилка при отриманні даних');
         return;
       }
       
       if (data.success) {
-        setCurrentStatus(data.statusNumber);
+        setCurrentStatus(data.status);
         setFoundTrackingId(data.trackingId);
-        setDeliveryTime(data.deliveryTime || 'не визначено');
+        setDeliveryTime(data.deliveryDate || 'не визначено');
         setShowResult(true);
       } else {
-        setError('Помилка при отриманні даних');
+        setError('Трек-номер не знайдено');
       }
       
     } catch (error) {
       console.error('Помилка при отриманні даних:', error);
-      setError('Помилка при підключенні до сервера. Перевірте, чи запущений сервер.');
+      setError('Помилка при підключенні до сервера');
     } finally {
       setIsSearching(false);
     }

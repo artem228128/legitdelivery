@@ -179,6 +179,7 @@ const Footer: React.FC = () => {
           <FooterLink to="/payment-delivery">Оплата/доставка</FooterLink>
           <FooterLink to="/warranty">Гарантія</FooterLink>
           <FooterLink to="/size-guide">Як підібрати розмір</FooterLink>
+          <FooterLink to="/tracking">Відстеження замовлення</FooterLink>
         </FooterSection>
         
         <FooterSection>

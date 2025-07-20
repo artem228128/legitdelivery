@@ -16,6 +16,8 @@ import UserAgreementPage from './pages/UserAgreementPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import SizeGuidePage from './pages/SizeGuidePage';
 import TrackingPage from './pages/TrackingPage';
+import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -84,8 +86,8 @@ function App() {
     <CartProvider>
       <Router>
         <GlobalStyle />
-        <ScrollToTop />
         <AppContainer>
+          <ScrollToTop />
           <Header />
           <MainContent>
             <Routes>
@@ -101,6 +103,8 @@ function App() {
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/size-guide" element={<SizeGuidePage />} />
               <Route path="/tracking" element={<TrackingPage />} />
+              <Route path="/admin-login" element={<AdminLoginPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </MainContent>
           <Footer />
