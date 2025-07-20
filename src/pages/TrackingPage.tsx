@@ -516,7 +516,7 @@ const TrackingPage: React.FC = () => {
         return;
       }
       
-      if (data.success) {
+      if (data.trackingId) {
         setCurrentStatus(data.status);
         setFoundTrackingId(data.trackingId);
         setDeliveryTime(data.deliveryDate || 'не визначено');

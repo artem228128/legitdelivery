@@ -365,10 +365,10 @@ const AdminPage: React.FC = () => {
 
   const fetchTrackingItems = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tracking.js`);
+      const response = await fetch(`${API_BASE_URL}/tracking`);
       const data = await response.json();
-      if (data.success) {
-        setTrackingItems(data.data);
+      if (Array.isArray(data)) {
+        setTrackingItems(data);
       }
     } catch (error) {
       console.error('Ошибка загрузки данных:', error);
@@ -399,12 +399,12 @@ const AdminPage: React.FC = () => {
     try {
       if (editingItem) {
         // Обновляем существующий элемент
-        const response = await fetch(`${API_BASE_URL}/tracking.js?id=${editingItem.id}`, {
+        const response = await fetch(`${API_BASE_URL}/tracking`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ ...formData, id: editingItem.id }),
         });
         
         if (response.ok) {
@@ -412,7 +412,7 @@ const AdminPage: React.FC = () => {
         }
       } else {
         // Добавляем новый элемент
-        const response = await fetch(`${API_BASE_URL}/tracking.js`, {
+        const response = await fetch(`${API_BASE_URL}/tracking`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -445,8 +445,12 @@ const AdminPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Ви впевнені, що хочете видалити цей трек-номер?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/tracking.js?id=${id}`, {
+        const response = await fetch(`${API_BASE_URL}/tracking`, {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id }),
         });
         
         if (response.ok) {

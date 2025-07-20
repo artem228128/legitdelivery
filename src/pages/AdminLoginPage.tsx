@@ -247,9 +247,9 @@ const AdminLoginPage: React.FC = () => {
 
   const checkServerStatus = async () => {
     try {
-      console.log('🔍 Проверяю статус сервера...', `${API_BASE_URL}/tracking.js`);
+      console.log('🔍 Проверяю статус сервера...', `${API_BASE_URL}/health`);
       setServerStatus('checking');
-      const response = await fetch(`${API_BASE_URL}/tracking.js`, {
+      const response = await fetch(`${API_BASE_URL}/health`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
