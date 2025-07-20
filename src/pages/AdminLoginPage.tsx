@@ -234,11 +234,11 @@ const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
   // Простой пароль для демонстрации (в продакшене использовать хеширование)
-  const ADMIN_PASSWORD = 'admin123';
+  const ADMIN_PASSWORD = 'hola321';
 
   // API base URL
     const API_BASE_URL = process.env.NODE_ENV === 'production'
@@ -292,20 +292,15 @@ const AdminLoginPage: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
     setError('');
 
-    // Имитация задержки для лучшего UX
-    setTimeout(() => {
-      if (password === ADMIN_PASSWORD) {
-        // Сохраняем в localStorage что админ вошел
-        localStorage.setItem('adminAuthenticated', 'true');
-        navigate('/admin');
-      } else {
-        setError('Неправильний пароль');
-      }
-      setIsLoading(false);
-    }, 1000);
+    if (password === ADMIN_PASSWORD) {
+      // Сохраняем в localStorage что админ вошел
+      localStorage.setItem('adminAuthenticated', 'true');
+      navigate('/admin');
+    } else {
+      setError('Неправильний пароль');
+    }
   };
 
   return (
@@ -342,21 +337,19 @@ const AdminLoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Введіть пароль адміністратора"
-                disabled={isLoading}
               />
               <button
                 type="button"
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </PasswordInput>
           </FormGroup>
           
-          <LoginButton type="submit" disabled={isLoading}>
-            {isLoading ? 'Перевірка...' : 'Увійти'}
+          <LoginButton type="submit">
+            Увійти
           </LoginButton>
         </Form>
       </LoginCard>
