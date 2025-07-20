@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Instagram, MessageCircle, Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { Instagram, MessageCircle, Mail } from 'lucide-react';
 
 const FooterContainer = styled.footer`
   color: var(--text-dark);
@@ -95,25 +95,7 @@ const SocialLink = styled.a`
   }
 `;
 
-const WorkingHours = styled.div`
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  
-  h4 {
-    margin: 0 0 8px 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-dark);
-  }
-  
-  p {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--text-dark);
-  }
-`;
+
 
 const FooterBottom = styled.div`
   max-width: 1200px;

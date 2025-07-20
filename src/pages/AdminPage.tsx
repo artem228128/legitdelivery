@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { ArrowLeft, Plus, Trash2, Edit, Search, Package, Users, Settings, LogOut } from 'lucide-react';
@@ -70,64 +70,7 @@ const LogoutButton = styled.button`
   }
 `;
 
-const ServerStatus = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 140px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 25px;
-  font-size: 1rem;
-  font-weight: 700;
-  border: 2px solid #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  
-  &.checking {
-    background: #ffc107;
-    color: #333;
-    border-color: #e0a800;
-  }
-  
-  &.online {
-    background: #28a745;
-    color: white;
-    border-color: #1e7e34;
-  }
-  
-  &.offline {
-    background: #dc3545;
-    color: white;
-    border-color: #c82333;
-  }
-  
-  .status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    
-    &.checking {
-      background: #ffc107;
-      animation: pulse 1.5s infinite;
-    }
-    
-    &.online {
-      background: #28a745;
-    }
-    
-    &.offline {
-      background: #dc3545;
-    }
-  }
-  
-  @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-  }
-`;
+
 
 const Content = styled.div`
   max-width: 1200px;
@@ -420,12 +363,7 @@ const AdminPage: React.FC = () => {
     ? '/api' 
     : 'http://localhost:3001/api';
 
-  // Загружаем данные с сервера
-  useEffect(() => {
-    fetchTrackingItems();
-  }, []);
-
-  const fetchTrackingItems = async () => {
+  const fetchTrackingItems = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/tracking`);
       const data = await response.json();
@@ -435,7 +373,13 @@ const AdminPage: React.FC = () => {
     } catch (error) {
       console.error('Ошибка загрузки данных:', error);
     }
-  };
+  }, [API_BASE_URL]);
+
+  // Загружаем данные с сервера
+  useEffect(() => {
+    fetchTrackingItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredItems = trackingItems.filter(item =>
     item.trackingId.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -281,6 +281,7 @@ const AdminLoginPage: React.FC = () => {
     const interval = setInterval(checkServerStatus, 30000);
     
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
