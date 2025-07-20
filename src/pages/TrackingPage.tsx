@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { ArrowLeft, Search, Package, Loader } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase configuration
+const supabaseUrl = 'https://xjavflsdkeovjbkpwzct.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqYXZmbHNka2Vvdmpia3B3emN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNDYyNDQsImV4cCI6MjA2ODYyMjI0NH0.H_iTpOEhc23BSvbYVFrZCgaGSwAYYmeeFKPzpTbvl_Y';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const fadeInUp = keyframes`
   from {
@@ -490,11 +496,6 @@ const TrackingPage: React.FC = () => {
   const [foundTrackingId, setFoundTrackingId] = useState('');
   const [deliveryTime, setDeliveryTime] = useState('не визначено');
 
-  // API endpoint для Vercel
-    const API_BASE_URL = process.env.NODE_ENV === 'production'
-    ? 'https://legitdelivery.com.ua/api'
-    : 'http://localhost:3001/api';
-
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trackingNumber.trim()) {
@@ -507,19 +508,23 @@ const TrackingPage: React.FC = () => {
     setShowResult(false);
     
     try {
-      // Делаем запрос к API серверу
-      const response = await fetch(`${API_BASE_URL}/tracking.js?trackingId=${trackingNumber}`);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        setError(data.error || 'Помилка при отриманні даних');
+      // Прямой запрос к Supabase
+      const { data: tracking, error } = await supabase
+        .from('tracking')
+        .select('*')
+        .ilike('tracking_id', trackingNumber.trim())
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Supabase error:', error);
+        setError('Помилка при отриманні даних');
         return;
       }
       
-      if (data.trackingId) {
-        setCurrentStatus(data.status);
-        setFoundTrackingId(data.trackingId);
-        setDeliveryTime(data.deliveryDate || 'не визначено');
+      if (tracking) {
+        setCurrentStatus(tracking.status);
+        setFoundTrackingId(tracking.tracking_id);
+        setDeliveryTime(tracking.delivery_date || 'не визначено');
         setShowResult(true);
       } else {
         setError('Трек-номер не знайдено');

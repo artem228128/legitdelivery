@@ -2,6 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { ArrowLeft, Plus, Trash2, Edit, Search, Package, Users, Settings, LogOut } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase configuration
+const supabaseUrl = 'https://xjavflsdkeovjbkpwzct.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqYXZmbHNka2Vvdmpia3B3emN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNDYyNDQsImV4cCI6MjA2ODYyMjI0NH0.H_iTpOEhc23BSvbYVFrZCgaGSwAYYmeeFKPzpTbvl_Y';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const fadeInUp = keyframes`
   from {
@@ -358,22 +364,33 @@ const AdminPage: React.FC = () => {
     }
   }, [navigate]);
 
-  // API base URL
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://legitdelivery.com.ua/api' 
-    : 'http://localhost:3001/api';
-
   const fetchTrackingItems = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tracking`);
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setTrackingItems(data);
+      const { data: trackings, error } = await supabase
+        .from('tracking')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return;
       }
+
+      const formattedTrackings = trackings.map(tracking => ({
+        trackingId: tracking.tracking_id,
+        status: tracking.status,
+        deliveryDate: tracking.delivery_date,
+        customerName: tracking.customer_name,
+        id: tracking.id,
+        createdAt: tracking.created_at,
+        updatedAt: tracking.updated_at
+      }));
+
+      setTrackingItems(formattedTrackings);
     } catch (error) {
       console.error('Ошибка загрузки данных:', error);
     }
-  }, [API_BASE_URL]);
+  }, []);
 
   // Загружаем данные с сервера
   useEffect(() => {
@@ -399,28 +416,36 @@ const AdminPage: React.FC = () => {
     try {
       if (editingItem) {
         // Обновляем существующий элемент
-        const response = await fetch(`${API_BASE_URL}/tracking`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...formData, id: editingItem.id }),
-        });
+        const { error } = await supabase
+          .from('tracking')
+          .update({
+            tracking_id: formData.trackingId,
+            status: formData.status,
+            delivery_date: formData.deliveryDate,
+            customer_name: formData.customerName,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editingItem.id);
         
-        if (response.ok) {
+        if (error) {
+          console.error('Supabase update error:', error);
+        } else {
           await fetchTrackingItems();
         }
       } else {
         // Добавляем новый элемент
-        const response = await fetch(`${API_BASE_URL}/tracking`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        const { error } = await supabase
+          .from('tracking')
+          .insert([{
+            tracking_id: formData.trackingId,
+            status: formData.status,
+            delivery_date: formData.deliveryDate,
+            customer_name: formData.customerName
+          }]);
         
-        if (response.ok) {
+        if (error) {
+          console.error('Supabase insert error:', error);
+        } else {
           await fetchTrackingItems();
         }
       }
@@ -445,15 +470,14 @@ const AdminPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Ви впевнені, що хочете видалити цей трек-номер?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/tracking`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id }),
-        });
+        const { error } = await supabase
+          .from('tracking')
+          .delete()
+          .eq('id', id);
         
-        if (response.ok) {
+        if (error) {
+          console.error('Supabase delete error:', error);
+        } else {
           await fetchTrackingItems();
         }
       } catch (error) {
