@@ -508,7 +508,7 @@ const TrackingPage: React.FC = () => {
     
     try {
       // Делаем запрос к API серверу
-      const response = await fetch(`${API_BASE_URL}/tracking?trackingId=${trackingNumber}`);
+      const response = await fetch(`${API_BASE_URL}/tracking.js?trackingId=${trackingNumber}`);
       const data = await response.json();
       
       if (!response.ok) {
