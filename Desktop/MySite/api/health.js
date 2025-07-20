@@ -1,14 +1,22 @@
-const supabase = require('../lib/supabase');
+const { createClient } = require('@supabase/supabase-js');
 
-module.exports = async function handler(req, res) {
+const supabaseUrl = process.env.SUPABASE_URL || 'https://xjavflsdkeovjbkpwzct.supabase.co';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqYXZmbHNka2Vvdmpia3B3emN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNDYyNDQsImV4cCI6MjA2ODYyMjI0NH0.H_iTpOEhc23BSvbYVFrZCgaGSwAYYmeeFKPzpTbvl_Y';
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+module.exports = async (req, res) => {
+  // CORS заголовки
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
   }
-
+  
   try {
-    // Проверяем соединение с Supabase
     const { data, error } = await supabase
       .from('tracking')
       .select('count')
@@ -18,11 +26,12 @@ module.exports = async function handler(req, res) {
       throw error;
     }
     
-    res.status(200).json({ 
+    res.json({ 
       status: 'OK',
-      message: 'Server is running',
+      message: 'Server is running on Vercel',
       database: 'Supabase Connected',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      environment: 'production'
     });
   } catch (error) {
     console.error('Health check failed:', error);
@@ -30,7 +39,8 @@ module.exports = async function handler(req, res) {
       status: 'ERROR',
       message: 'Database connection failed',
       error: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      environment: 'production'
     });
   }
 }; 
