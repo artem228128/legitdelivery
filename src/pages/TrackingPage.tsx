@@ -491,8 +491,8 @@ const TrackingPage: React.FC = () => {
   const [deliveryTime, setDeliveryTime] = useState('не визначено');
 
   // API endpoint для Vercel
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? '/api' 
+    const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? 'https://legitdelivery.com.ua/api'
     : 'http://localhost:3001/api';
 
   const handleSearch = async (e: React.FormEvent) => {

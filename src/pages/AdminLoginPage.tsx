@@ -241,8 +241,8 @@ const AdminLoginPage: React.FC = () => {
   const ADMIN_PASSWORD = 'admin123';
 
   // API base URL
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? '/api' 
+    const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? 'https://legitdelivery.com.ua/api'
     : 'http://localhost:3001/api';
 
   const checkServerStatus = async () => {
