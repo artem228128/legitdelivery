@@ -648,25 +648,29 @@ const TrackingPage: React.FC = () => {
             <ProgressContainer>
               <ProgressBar $progress={getProgressPercentage()} />
               <StepContainer>
-                {allSteps.map((step) => {
-                  const status = getStepStatus(step.number);
-                  return (
-                    <Step key={step.number} $isActive={status === 'active'} $isCompleted={status === 'completed'}>
-                      <StepIcon $isActive={status === 'active'} $isCompleted={status === 'completed'}>
-                        {step.number}
-                      </StepIcon>
-                      <StepContent>
-                        <div className="step-number">Етап {step.number}</div>
-                        <h3>{step.text}</h3>
-                        <StatusBadge $status={status}>
-                          {status === 'completed' && 'Завершено'}
-                          {status === 'active' && 'В процесі'}
-                          {status === 'pending' && 'Очікується'}
-                        </StatusBadge>
-                      </StepContent>
-                    </Step>
-                  );
-                })}
+                {allSteps
+                  .filter((step) => {
+                    const status = getStepStatus(step.number);
+                    return status !== 'pending'; // Показываем только completed и active
+                  })
+                  .map((step) => {
+                    const status = getStepStatus(step.number);
+                    return (
+                      <Step key={step.number} $isActive={status === 'active'} $isCompleted={status === 'completed'}>
+                        <StepIcon $isActive={status === 'active'} $isCompleted={status === 'completed'}>
+                          {step.number}
+                        </StepIcon>
+                        <StepContent>
+                          <div className="step-number">Етап {step.number}</div>
+                          <h3>{step.text}</h3>
+                          <StatusBadge $status={status}>
+                            {status === 'completed' && 'Завершено'}
+                            {status === 'active' && 'В процесі'}
+                          </StatusBadge>
+                        </StepContent>
+                      </Step>
+                    );
+                  })}
               </StepContainer>
             </ProgressContainer>
           </TrackingResult>
