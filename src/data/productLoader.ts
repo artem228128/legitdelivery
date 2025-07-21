@@ -17,31 +17,31 @@ const getCategory = (model: string, brand: string): string => {
   const brandLower = brand.toLowerCase();
   
   if (modelLower.includes('jordan') || modelLower.includes('aj')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (modelLower.includes('air max') || modelLower.includes('air force')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (modelLower.includes('yeezy')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (modelLower.includes('dunk')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (brandLower.includes('new balance')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (brandLower.includes('adidas')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (modelLower.includes('forum') || modelLower.includes('samba') || modelLower.includes('gazelle')) {
-    return 'Кроссовки';
+    return 'Кросівки';
   }
   if (brandLower.includes('off-white') || brandLower.includes('off white')) {
-    return 'Streetwear';
+    return 'Одяг';
   }
   
-  return 'Кроссовки';
+  return 'Кросівки';
 };
 
 // Функция для генерации размеров

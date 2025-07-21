@@ -77,12 +77,11 @@ export const categories = uniqueCategories.map(categoryName => ({
 
 function getCategoryImage(categoryName: string): string {
   switch (categoryName.toLowerCase()) {
-    case 'кроссовки':
+    case 'кросівки':
       return 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop';
-    case 'streetwear':
-    case 'одежда':
+    case 'одяг':
       return 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop';
-    case 'аксессуары':
+    case 'аксесуари':
       return 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop';
     default:
       return 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop';
