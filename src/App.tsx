@@ -105,6 +105,7 @@ function App() {
               <Route path="/tracking" element={<TrackingPage />} />
               <Route path="/admin-login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="*" element={<HomePage />} />
             </Routes>
           </MainContent>
           <Footer />
