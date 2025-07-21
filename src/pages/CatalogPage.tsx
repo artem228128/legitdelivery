@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Filter, Grid, List, X, ChevronDown, ChevronUp, Heart } from 'lucide-react';
@@ -670,22 +670,24 @@ const CatalogPage: React.FC = () => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // Сброс страницы при изменении фильтров
+  // Сброс страницы при изменении фильтров (но не при обычной пагинации)
+  const prevFiltersRef = useRef(filters);
+  const prevSortByRef = useRef(sortBy);
+  
   useEffect(() => {
-    const currentPageFromUrl = searchParams.get('page');
-    const pageNumber = currentPageFromUrl ? parseInt(currentPageFromUrl, 10) : 1;
+    // Проверяем, действительно ли изменились фильтры или сортировка
+    const filtersChanged = JSON.stringify(prevFiltersRef.current) !== JSON.stringify(filters);
+    const sortByChanged = JSON.stringify(prevSortByRef.current) !== JSON.stringify(sortBy);
     
-    // Проверяем, изменились ли фильтры или сортировка (не включая page параметр)
-    const urlParamsWithoutPage = new URLSearchParams(searchParams.toString());
-    urlParamsWithoutPage.delete('page');
-    
-    // Если есть другие параметры кроме page, сбрасываем на первую страницу
-    if (urlParamsWithoutPage.toString() !== '') {
-      if (pageNumber !== 1 && currentPage !== 1) {
-        updatePage(1);
-      }
+    if (filtersChanged || sortByChanged) {
+      // Сбрасываем на первую страницу только при изменении фильтров/сортировки
+      updatePage(1);
+      
+      // Обновляем ref для следующего сравнения
+      prevFiltersRef.current = filters;
+      prevSortByRef.current = sortBy;
     }
-  }, [filters, sortBy]);
+  }, [filters, sortBy, updatePage]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -700,14 +702,14 @@ const CatalogPage: React.FC = () => {
     // eslint-disable-next-line
   }, [searchParams]);
 
-  // Синхронизация currentPage с URL
+  // Синхронизация currentPage с URL только при загрузке
   useEffect(() => {
     const pageParam = searchParams.get('page');
     const pageNumber = pageParam ? parseInt(pageParam, 10) : 1;
-    if (pageNumber !== currentPage) {
+    if (pageNumber !== currentPage && pageNumber > 0) {
       setCurrentPage(pageNumber);
     }
-  }, [searchParams]);
+  }, [searchParams.get('page')]);
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
     setFilters(prev => {
