@@ -19,7 +19,16 @@
       "dest": "/api/$1"
     },
     {
-      "handle": "filesystem"
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|webp|txt|xml))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(favicon\\.ico|manifest\\.json|robots\\.txt)",
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
