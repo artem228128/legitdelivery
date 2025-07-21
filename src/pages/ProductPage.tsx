@@ -54,9 +54,13 @@ const ProductLayout = styled.div`
   margin-bottom: 24px; /* Добавлен нижний отступ */
   align-items: start;
   
+  @media (max-width: 1200px) {
+    gap: 50px;
+  }
+  
   @media (max-width: 900px) {
     grid-template-columns: 45% 55%;
-    gap: 30px;
+    gap: 40px;
   }
   
   @media (max-width: 768px) {
@@ -84,7 +88,7 @@ const ImageSection = styled.div`
 
 const MainImage = styled.div<{ bgImage: string }>`
   width: 100%;
-  height: 500px;
+  height: 400px;
   background: url(${props => props.bgImage}) center no-repeat;
   background-size: contain;
   background-color: #ffffff;
@@ -92,6 +96,10 @@ const MainImage = styled.div<{ bgImage: string }>`
   margin-bottom: 20px;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 1200px) {
+    height: 380px;
+  }
   
   @media (max-width: 900px) {
     height: 350px;
@@ -113,13 +121,18 @@ const MainImage = styled.div<{ bgImage: string }>`
 
 const ImageGallery = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 12px;
   justify-content: center;
+  
+  @media (max-width: 1200px) {
+    gap: 10px;
+  }
   
   @media (max-width: 768px) {
     justify-content: flex-start;
     overflow-x: auto;
     padding-bottom: 10px;
+    gap: 8px;
     
     &::-webkit-scrollbar {
       height: 6px;
@@ -137,13 +150,13 @@ const ImageGallery = styled.div`
   }
   
   @media (max-width: 480px) {
-    gap: 10px;
+    gap: 6px;
   }
 `;
 
 const ThumbnailImage = styled.div<{ bgImage: string; active: boolean }>`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background: url(${props => props.bgImage}) center no-repeat;
   background-size: contain;
   background-color: #ffffff;
@@ -152,6 +165,12 @@ const ThumbnailImage = styled.div<{ bgImage: string; active: boolean }>`
   border: 3px solid ${props => props.active ? 'var(--primary-blue)' : 'transparent'};
   transition: all 0.3s ease;
   flex-shrink: 0;
+  
+  @media (max-width: 1200px) {
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+  }
   
   @media (max-width: 900px) {
     width: 70px;
