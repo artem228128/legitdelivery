@@ -77,8 +77,16 @@ const isHitProduct = (title: string, brand: string): boolean => {
 const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom: boolean = false): Product => {
   const price = parsePrice(jsonProduct.price);
   
+  // Используем ID из JSON файла если есть, иначе генерируем
+  let productId;
+  if (jsonProduct.id) {
+    productId = jsonProduct.id;
+  } else {
+    productId = isCustom ? `custom_${jsonProduct.sku || Date.now()}` : `json_${jsonProduct.sku || Date.now()}`;
+  }
+  
   return {
-    id: isCustom ? `custom_${jsonProduct.sku || Date.now()}` : `json_${jsonProduct.sku || Date.now()}`,
+    id: productId,
     name: jsonProduct.title,
     price: price,
     originalPrice: price > 2500 ? Math.round(price * 1.2) : undefined,

@@ -20,6 +20,7 @@ export interface Product {
 
 // Новый интерфейс для данных из JSON файлов
 export interface ProductFromJSON {
+  id?: string; // Добавляем опциональное поле ID
   url: string;
   title: string;
   brand: string;
