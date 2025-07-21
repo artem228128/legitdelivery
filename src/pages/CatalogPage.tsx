@@ -695,11 +695,14 @@ const CatalogPage: React.FC = () => {
 
   // Инициализация фильтров из URL при первой загрузке
   useEffect(() => {
+    console.log('Initializing filters from URL...');
     const brandParam = searchParams.get('brand');
     const categoryParam = searchParams.get('category');
     const modelParam = searchParams.get('model');
+    console.log('URL params:', { brandParam, categoryParam, modelParam });
     
     if (brandParam || categoryParam || modelParam) {
+      console.log('Setting filters from URL');
       setFilters(prev => ({
         ...prev,
         brands: brandParam ? [brandParam] : [],
@@ -719,7 +722,9 @@ const CatalogPage: React.FC = () => {
   }, [searchParams.get('page')]);
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
+    console.log('Filter change:', key, value);
     setFilters(prev => {
+      console.log('Previous filters:', prev);
       let newFilters;
       
       if (key === 'priceRange') {
@@ -761,13 +766,17 @@ const CatalogPage: React.FC = () => {
       }
       
       // Обновляем URL при изменении фильтров
+      console.log('New filters for URL update:', newFilters);
       const newSearchParams = new URLSearchParams();
       
       // Добавляем бренды в URL только если они есть
       if (newFilters.brands && newFilters.brands.length > 0) {
+        console.log('Adding brands to URL:', newFilters.brands);
         newFilters.brands.forEach(brand => {
           newSearchParams.append('brand', brand);
         });
+      } else {
+        console.log('No brands to add to URL');
       }
       
       // Добавляем категории в URL только если они есть
@@ -810,6 +819,7 @@ const CatalogPage: React.FC = () => {
         }
       }
       
+      console.log('Final URL params:', newSearchParams.toString());
       setSearchParams(newSearchParams);
       return newFilters;
     });
