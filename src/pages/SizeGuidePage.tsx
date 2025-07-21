@@ -215,40 +215,64 @@ const ResultSection = styled.div`
   }
 `;
 
-// Данные о размерах
+// Данные о размерах с учетом пола
 const sizeData = {
-  "Nike": [
-    { "cm": 24, "EU": "38.5", "UK": "5.5", "US": "6" },
-    { "cm": 24.5, "EU": "39", "UK": "6", "US": "6.5" },
-    { "cm": 25, "EU": "40", "UK": "6", "US": "7" },
-    { "cm": 25.5, "EU": "40.5", "UK": "6.5", "US": "7.5" },
-    { "cm": 26, "EU": "41", "UK": "7", "US": "8" },
-    { "cm": 26.5, "EU": "42", "UK": "7.5", "US": "8.5" },
-    { "cm": 27, "EU": "42.5", "UK": "8", "US": "9" },
-    { "cm": 27.5, "EU": "43", "UK": "8.5", "US": "9.5" },
-    { "cm": 28, "EU": "44", "UK": "9", "US": "10" },
-    { "cm": 28.5, "EU": "44.5", "UK": "9.5", "US": "10.5" },
-    { "cm": 29, "EU": "45", "UK": "10", "US": "11" },
-    { "cm": 29.5, "EU": "45.5", "UK": "10.5", "US": "11.5" },
-    { "cm": 30, "EU": "46", "UK": "11", "US": "12" },
-    { "cm": 30.5, "EU": "47", "UK": "11.5", "US": "12.5" },
-    { "cm": 31, "EU": "47.5", "UK": "12", "US": "13" }
-  ],
-  "Adidas": [
-    { "cm": 24.5, "EU": "39.5", "UK": "6.5", "US": "6" },
-    { "cm": 25, "EU": "40", "UK": "7", "US": "6.5" },
-    { "cm": 25.5, "EU": "40.5", "UK": "7.5", "US": "7" },
-    { "cm": 26, "EU": "41.5", "UK": "8", "US": "7.5" },
-    { "cm": 26.5, "EU": "42", "UK": "8.5", "US": "8" },
-    { "cm": 27, "EU": "42.5", "UK": "9", "US": "8.5" },
-    { "cm": 27.5, "EU": "43.5", "UK": "9.5", "US": "9" },
-    { "cm": 28, "EU": "44", "UK": "10", "US": "9.5" },
-    { "cm": 28.5, "EU": "44.5", "UK": "10.5", "US": "10" },
-    { "cm": 29, "EU": "45.5", "UK": "11", "US": "10.5" },
-    { "cm": 29.5, "EU": "46", "UK": "11.5", "US": "11" },
-    { "cm": 30, "EU": "46.5", "UK": "12", "US": "11.5" },
-    { "cm": 30.5, "EU": "47.5", "UK": "12.5", "US": "12" }
-  ],
+  "Nike": {
+    "Man": [
+      { "cm": 25, "EU": "40", "UK": "7", "US": "7" },
+      { "cm": 25.5, "EU": "40.5", "UK": "7.5", "US": "7.5" },
+      { "cm": 26, "EU": "41", "UK": "8", "US": "8" },
+      { "cm": 26.5, "EU": "42", "UK": "8.5", "US": "8.5" },
+      { "cm": 27, "EU": "42.5", "UK": "9", "US": "9" },
+      { "cm": 27.5, "EU": "43", "UK": "9.5", "US": "9.5" },
+      { "cm": 28, "EU": "44", "UK": "10", "US": "10" },
+      { "cm": 28.5, "EU": "44.5", "UK": "10.5", "US": "10.5" },
+      { "cm": 29, "EU": "45", "UK": "11", "US": "11" },
+      { "cm": 30, "EU": "46", "UK": "12", "US": "12" },
+      { "cm": 30.5, "EU": "46.5", "UK": "12.5", "US": "12.5" },
+      { "cm": 31, "EU": "47", "UK": "13", "US": "13" },
+      { "cm": 31, "EU": "47.5", "UK": "13", "US": "13" }
+    ],
+    "Woman": [
+      { "cm": 22, "EU": "35.5", "UK": "3", "US": "5" },
+      { "cm": 22.5, "EU": "36", "UK": "3.5", "US": "5.5" },
+      { "cm": 23, "EU": "36.5", "UK": "4", "US": "6" },
+      { "cm": 23.5, "EU": "37.5", "UK": "4.5", "US": "6.5" },
+      { "cm": 24, "EU": "38", "UK": "5", "US": "7" },
+      { "cm": 24.5, "EU": "38.5", "UK": "5.5", "US": "7.5" },
+      { "cm": 25, "EU": "39", "UK": "6", "US": "8" }
+    ]
+  },
+  "Adidas": {
+    "Man": [
+      { "cm": 26, "EU": "40", "UK": "7", "US": "8" },
+      { "cm": 26.5, "EU": "40.5", "UK": "7.5", "US": "8.5" },
+      { "cm": 27, "EU": "41", "UK": "8", "US": "9" },
+      { "cm": 27.5, "EU": "41.5", "UK": "8.5", "US": "9.5" },
+      { "cm": 28, "EU": "42", "UK": "9", "US": "10" },
+      { "cm": 28.5, "EU": "42.5", "UK": "9.5", "US": "10.5" },
+      { "cm": 29, "EU": "43", "UK": "10", "US": "11" },
+      { "cm": 29.5, "EU": "43.5", "UK": "10.5", "US": "11.5" },
+      { "cm": 30, "EU": "44", "UK": "11", "US": "12" },
+      { "cm": 30.5, "EU": "44.5", "UK": "11.5", "US": "12.5" },
+      { "cm": 31, "EU": "45", "UK": "12", "US": "13" },
+      { "cm": 31.5, "EU": "45.5", "UK": "12.5", "US": "13.5" },
+      { "cm": 32, "EU": "46", "UK": "13", "US": "14" },
+      { "cm": 32.5, "EU": "46.5", "UK": "13.5", "US": "14.5" },
+      { "cm": 33, "EU": "47", "UK": "14", "US": "15" }
+    ],
+    "Woman": [
+      { "cm": 22, "EU": "36", "UK": "3.5", "US": "5" },
+      { "cm": 22.5, "EU": "36.5", "UK": "4", "US": "5.5" },
+      { "cm": 23, "EU": "37", "UK": "4.5", "US": "6" },
+      { "cm": 23.5, "EU": "37.5", "UK": "5", "US": "6.5" },
+      { "cm": 24, "EU": "38", "UK": "5.5", "US": "7" },
+      { "cm": 24.5, "EU": "38.5", "UK": "6", "US": "7.5" },
+      { "cm": 25, "EU": "39", "UK": "6.5", "US": "8" },
+      { "cm": 25.5, "EU": "39.5", "UK": "7", "US": "8.5" },
+      { "cm": 26, "EU": "40", "UK": "7.5", "US": "9" }
+    ]
+  },
   "New Balance": [
     { "cm": 23.5, "EU": "38", "UK": "5.5", "US": "5" },
     { "cm": 24, "EU": "38.5", "UK": "6", "US": "5.5" },
@@ -267,6 +291,79 @@ const sizeData = {
     { "cm": 30.5, "EU": "47", "UK": "12.5", "US": "12" },
     { "cm": 31, "EU": "47.5", "UK": "13", "US": "12.5" }
   ],
+  "Off-White": {
+    "Man": [
+      { "cm": 25, "EU": "40", "UK": "7", "US": "7" },
+      { "cm": 25.5, "EU": "40.5", "UK": "7.5", "US": "7.5" },
+      { "cm": 26, "EU": "41", "UK": "8", "US": "8" },
+      { "cm": 26.5, "EU": "41.5", "UK": "8.5", "US": "8.5" },
+      { "cm": 27, "EU": "42", "UK": "9", "US": "9" },
+      { "cm": 27.5, "EU": "42.5", "UK": "9.5", "US": "9.5" },
+      { "cm": 28, "EU": "43", "UK": "10", "US": "10" },
+      { "cm": 28.5, "EU": "43.5", "UK": "10.5", "US": "10.5" },
+      { "cm": 29, "EU": "44", "UK": "11", "US": "11" },
+      { "cm": 29.5, "EU": "44.5", "UK": "11.5", "US": "11.5" },
+      { "cm": 30, "EU": "45", "UK": "12", "US": "12" },
+      { "cm": 30.5, "EU": "45.5", "UK": "12.5", "US": "12.5" },
+      { "cm": 31, "EU": "46", "UK": "13", "US": "13" },
+      { "cm": 31.5, "EU": "46.5", "UK": "13.5", "US": "13.5" },
+      { "cm": 32, "EU": "47", "UK": "14", "US": "14" },
+      { "cm": 32.5, "EU": "47.5", "UK": "14.5", "US": "14.5" },
+      { "cm": 33, "EU": "48", "UK": "15", "US": "15" }
+    ],
+    "Woman": [
+      { "cm": 22, "EU": "35", "UK": "2", "US": "5" },
+      { "cm": 22.5, "EU": "35.5", "UK": "2.5", "US": "5.5" },
+      { "cm": 23, "EU": "36", "UK": "3", "US": "6" },
+      { "cm": 23.5, "EU": "36.5", "UK": "3.5", "US": "6.5" },
+      { "cm": 24, "EU": "37", "UK": "4", "US": "7" },
+      { "cm": 24.5, "EU": "37.5", "UK": "4.5", "US": "7.5" },
+      { "cm": 25, "EU": "38", "UK": "5", "US": "8" },
+      { "cm": 25.5, "EU": "38.5", "UK": "5.5", "US": "8.5" },
+      { "cm": 26, "EU": "39", "UK": "6", "US": "9" },
+      { "cm": 26.5, "EU": "39.5", "UK": "6.5", "US": "9.5" },
+      { "cm": 27, "EU": "40", "UK": "7", "US": "10" },
+      { "cm": 27.5, "EU": "40.5", "UK": "7.5", "US": "10.5" },
+      { "cm": 28, "EU": "41", "UK": "8", "US": "11" },
+      { "cm": 28.5, "EU": "41.5", "UK": "8.5", "US": "11.5" }
+    ]
+  },
+  "Salomon": {
+    "Man": [
+      { "cm": 25, "EU": "40", "UK": "6.5", "US": "7" },
+      { "cm": 25.5, "EU": "40.5", "UK": "7", "US": "7.5" },
+      { "cm": 26, "EU": "41", "UK": "7.5", "US": "8" },
+      { "cm": 26.5, "EU": "41.5", "UK": "8", "US": "8.5" },
+      { "cm": 27, "EU": "42", "UK": "8.5", "US": "9" },
+      { "cm": 27.5, "EU": "42.5", "UK": "9", "US": "9.5" },
+      { "cm": 28, "EU": "43", "UK": "9.5", "US": "10" },
+      { "cm": 28.5, "EU": "43.5", "UK": "10", "US": "10.5" },
+      { "cm": 29, "EU": "44", "UK": "10.5", "US": "11" },
+      { "cm": 29.5, "EU": "44.5", "UK": "11", "US": "11.5" },
+      { "cm": 30, "EU": "45", "UK": "11.5", "US": "12" },
+      { "cm": 30.5, "EU": "45.5", "UK": "12", "US": "12.5" },
+      { "cm": 31, "EU": "46", "UK": "12.5", "US": "13" },
+      { "cm": 31.5, "EU": "46.5", "UK": "13", "US": "13.5" },
+      { "cm": 32, "EU": "47", "UK": "13.5", "US": "14" }
+    ],
+    "Woman": [
+      { "cm": 22, "EU": "36", "UK": "3.5", "US": "5" },
+      { "cm": 22.5, "EU": "36.5", "UK": "4", "US": "5.5" },
+      { "cm": 23, "EU": "37", "UK": "4.5", "US": "6" },
+      { "cm": 23.5, "EU": "37.5", "UK": "5", "US": "6.5" },
+      { "cm": 24, "EU": "38", "UK": "5.5", "US": "7" },
+      { "cm": 24.5, "EU": "38.5", "UK": "6", "US": "7.5" },
+      { "cm": 25, "EU": "39", "UK": "6.5", "US": "8" },
+      { "cm": 25.5, "EU": "39.5", "UK": "7", "US": "8.5" },
+      { "cm": 26, "EU": "40", "UK": "7.5", "US": "9" },
+      { "cm": 26.5, "EU": "40.5", "UK": "8", "US": "9.5" },
+      { "cm": 27, "EU": "41", "UK": "8.5", "US": "10" },
+      { "cm": 27.5, "EU": "41.5", "UK": "9", "US": "10.5" },
+      { "cm": 28, "EU": "42", "UK": "9.5", "US": "11" },
+      { "cm": 28.5, "EU": "42.5", "UK": "10", "US": "11.5" },
+      { "cm": 29, "EU": "43", "UK": "10.5", "US": "12" }
+    ]
+  },
   "Yeezy": [
     { "EU": "35.5", "Adidas EU": "36", "UK": "4", "US": "3.5", "cm": 22 },
     { "EU": "36", "Adidas EU": "36 2/3", "UK": "4.5", "US": "4", "cm": 22.5 },
@@ -294,11 +391,12 @@ const sizeData = {
 const SizeGuidePage: React.FC = () => {
   const [footLength, setFootLength] = useState('');
   const [brand, setBrand] = useState('');
+  const [gender, setGender] = useState('');
   const [result, setResult] = useState<any>(null);
-  const [errors, setErrors] = useState<{ footLength?: string; brand?: string }>({});
+  const [errors, setErrors] = useState<{ footLength?: string; brand?: string; gender?: string }>({});
 
   const calculateSize = () => {
-    const newErrors: { footLength?: string; brand?: string } = {};
+    const newErrors: { footLength?: string; brand?: string; gender?: string } = {};
 
     if (!footLength) {
       newErrors.footLength = 'Введіть довжину стопи';
@@ -313,6 +411,10 @@ const SizeGuidePage: React.FC = () => {
       newErrors.brand = 'Виберіть бренд';
     }
 
+    if (!gender) {
+      newErrors.gender = 'Виберіть стать';
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -321,9 +423,23 @@ const SizeGuidePage: React.FC = () => {
     setErrors({});
 
     const length = parseFloat(footLength);
-    const brandSizes = sizeData[brand as keyof typeof sizeData];
+    const brandData = sizeData[brand as keyof typeof sizeData];
     
-    if (!brandSizes) {
+    if (!brandData) {
+      setResult(null);
+      return;
+    }
+
+    // Для Nike, Off-White, Salomon и Adidas используем размеры с учетом пола
+    let brandSizes;
+    if (brand === 'Nike' || brand === 'Off-White' || brand === 'Salomon' || brand === 'Adidas') {
+      brandSizes = brandData[gender as keyof typeof brandData] as any[];
+    } else {
+      // Для других брендов пока используем общие размеры
+      brandSizes = brandData as any[];
+    }
+    
+    if (!brandSizes || brandSizes.length === 0) {
       setResult(null);
       return;
     }
@@ -343,6 +459,7 @@ const SizeGuidePage: React.FC = () => {
     setResult({
       footLength: length,
       brand,
+      gender,
       size: closestSize,
       difference: minDifference
     });
@@ -422,6 +539,8 @@ const SizeGuidePage: React.FC = () => {
                 <option value="Nike">Nike</option>
                 <option value="Adidas">Adidas</option>
                 <option value="New Balance">New Balance</option>
+                <option value="Off-White">Off-White</option>
+                <option value="Salomon">Salomon</option>
                 <option value="Yeezy">Yeezy</option>
               </select>
               {errors.brand && (
@@ -431,10 +550,28 @@ const SizeGuidePage: React.FC = () => {
               )}
             </div>
 
+            <div className="form-group">
+              <label>Стать</label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className={errors.gender ? 'error' : ''}
+              >
+                <option value="">Виберіть стать</option>
+                <option value="Man">Man</option>
+                <option value="Woman">Woman</option>
+              </select>
+              {errors.gender && (
+                <p style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
+                  {errors.gender}
+                </p>
+              )}
+            </div>
+
             <button 
               className="calculate-btn"
               onClick={calculateSize}
-              disabled={!footLength || !brand}
+              disabled={!footLength || !brand || !gender}
             >
               Розрахувати розмір
             </button>
@@ -452,7 +589,7 @@ const SizeGuidePage: React.FC = () => {
                   {result.size.EU} EU
                 </div>
                 <div className="size-details">
-                  <strong>Для стопи довжиною {result.footLength} см у бренді {result.brand}:</strong><br />
+                  <strong>Для стопи довжиною {result.footLength} см у бренді {result.brand} ({result.gender}):</strong><br />
                   EU: {result.size.EU} | UK: {result.size.UK} | US: {result.size.US}
                   {result.brand === 'Yeezy' && result.size['Adidas EU'] && (
                     <span> | Adidas EU: {result.size['Adidas EU']}</span>
