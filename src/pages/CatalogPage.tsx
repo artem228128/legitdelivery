@@ -693,14 +693,21 @@ const CatalogPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
+  // Инициализация фильтров из URL при первой загрузке
   useEffect(() => {
     const brandParam = searchParams.get('brand');
-    setFilters(prev => ({
-      ...prev,
-      brands: brandParam ? [brandParam] : []
-    }));
-    // eslint-disable-next-line
-  }, [searchParams]);
+    const categoryParam = searchParams.get('category');
+    const modelParam = searchParams.get('model');
+    
+    if (brandParam || categoryParam || modelParam) {
+      setFilters(prev => ({
+        ...prev,
+        brands: brandParam ? [brandParam] : [],
+        categories: categoryParam ? [categoryParam] : [],
+        models: modelParam ? [modelParam] : []
+      }));
+    }
+  }, []); // Только при первой загрузке
 
   // Синхронизация currentPage с URL только при загрузке
   useEffect(() => {
@@ -713,48 +720,86 @@ const CatalogPage: React.FC = () => {
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
     setFilters(prev => {
+      let newFilters;
+      
       if (key === 'priceRange') {
         // Специальная обработка для диапазона цен
         const [min, max] = value;
         const minPrice = isNaN(min) ? 0 : Math.max(0, min);
         const maxPrice = isNaN(max) ? 25000 : Math.max(minPrice, max);
         
-        return {
+        newFilters = {
           ...prev,
-          priceRange: [minPrice, maxPrice]
+          priceRange: [minPrice, maxPrice] as [number, number]
         };
-      }
-      
-      if (key === 'brands') {
+      } else if (key === 'brands') {
         // При изменении бренда сбрасываем модели
         const array = prev[key] as any[];
         const newArray = array.includes(value)
           ? array.filter(item => item !== value)
           : [...array, value];
         
-        return {
+        newFilters = {
           ...prev,
           [key]: newArray,
           models: [] // Сбрасываем выбранные модели
         };
-      }
-      
-      if (Array.isArray(prev[key])) {
+      } else if (Array.isArray(prev[key])) {
         const array = prev[key] as any[];
         const newArray = array.includes(value)
           ? array.filter(item => item !== value)
           : [...array, value];
-        return {
+        newFilters = {
           ...prev,
           [key]: newArray
         };
+      } else {
+        newFilters = {
+          ...prev,
+          [key]: value
+        };
       }
-      return {
-        ...prev,
-        [key]: value
-      };
+      
+      // Обновляем URL при изменении фильтров
+      const newSearchParams = new URLSearchParams();
+      
+      // Добавляем бренды в URL
+      if (newFilters.brands.length > 0) {
+        newFilters.brands.forEach(brand => {
+          newSearchParams.append('brand', brand);
+        });
+      }
+      
+      // Добавляем категории в URL
+      if (newFilters.categories.length > 0) {
+        newFilters.categories.forEach(category => {
+          newSearchParams.append('category', category);
+        });
+      }
+      
+      // Добавляем модели в URL
+      if (newFilters.models.length > 0) {
+        newFilters.models.forEach(model => {
+          newSearchParams.append('model', model);
+        });
+      }
+      
+      // Сохраняем поиск если есть
+      const currentSearch = searchParams.get('search');
+      if (currentSearch) {
+        newSearchParams.set('search', currentSearch);
+      }
+      
+      // Сохраняем фильтр если есть
+      const currentFilter = searchParams.get('filter');
+      if (currentFilter) {
+        newSearchParams.set('filter', currentFilter);
+      }
+      
+      setSearchParams(newSearchParams);
+      return newFilters;
     });
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   const handleSortChange = useCallback((value: string) => {
     const [sortBy, order] = value.split('-');
