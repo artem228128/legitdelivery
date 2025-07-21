@@ -1,24 +1,7 @@
 import { Product, ProductFromJSON } from '../types';
 
-// Импорт всех JSON файлов
-import aj1Products from '../products_jsons/aj1_products.json';
-import aj3Products from '../products_jsons/aj3_products.json';
-import aj5Products from '../products_jsons/aj5_products.json';
-import aj1hProducts from '../products_jsons/aj1h_products.json';
-import aj1mProducts from '../products_jsons/aj1m_products.json';
-import air95Products from '../products_jsons/air95_products.json';
-import airForce1Products from '../products_jsons/air_force_1_products.json';
-import airJordan4Products from '../products_jsons/air_jordan_4_products.json';
-import airmax1Products from '../products_jsons/airmax1_products.json';
-import dunkProducts from '../products_jsons/dunk_products_final.json';
-import forumProducts from '../products_jsons/forum_products.json';
-import gazelProducts from '../products_jsons/gazel_products.json';
-import newBalanceProducts from '../products_jsons/new_balance_products.json';
-import offWhiteProducts from '../products_jsons/off_white_products.json';
-import sambaProducts from '../products_jsons/samba_products.json';
-import spezialProducts from '../products_jsons/spezial_products.json';
-import vomero5Products from '../products_jsons/vomero5_products.json';
-import yeezyProducts from '../products_jsons/yeezy_products.json';
+// Используем готовый смешанный файл вместо отдельных файлов
+import allProductsMixed from '../products_jsons/all_products_mixed.json';
 import customSneakersProducts from '../products_jsons/custom_sneakers.json';
 
 // Функция для преобразования цены из строки в число (в гривнах)
@@ -113,46 +96,26 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
   };
 };
 
-// Загрузка всех продуктов
+// Загрузка всех продуктов из готового смешанного файла
 const loadAllProducts = (): Product[] => {
-  const allJsonProducts: ProductFromJSON[][] = [
-    aj1Products as ProductFromJSON[],
-    aj3Products as ProductFromJSON[],
-    aj5Products as ProductFromJSON[],
-    aj1hProducts as ProductFromJSON[],
-    aj1mProducts as ProductFromJSON[],
-    air95Products as ProductFromJSON[],
-    airForce1Products as ProductFromJSON[],
-    airJordan4Products as ProductFromJSON[],
-    airmax1Products as ProductFromJSON[],
-    dunkProducts as ProductFromJSON[],
-    forumProducts as ProductFromJSON[],
-    gazelProducts as ProductFromJSON[],
-    newBalanceProducts as ProductFromJSON[],
-    offWhiteProducts as ProductFromJSON[],
-    sambaProducts as ProductFromJSON[],
-    spezialProducts as ProductFromJSON[],
-    vomero5Products as ProductFromJSON[],
-    yeezyProducts as ProductFromJSON[],
-  ];
-
   const convertedProducts: Product[] = [];
   let globalIndex = 0;
 
-  // Сначала обрабатываем обычные товары
-  allJsonProducts.forEach(productArray => {
-    productArray.forEach(jsonProduct => {
-      try {
-        const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
-        convertedProducts.push(convertedProduct);
-        globalIndex++;
-      } catch (error) {
-        console.warn('Ошибка при конвертации продукта:', error);
-      }
-    });
+  // Используем готовый смешанный файл (данные уже перемешаны)
+  const mixedProducts = allProductsMixed as ProductFromJSON[];
+  
+  // Загружаем все товары из смешанного файла
+  mixedProducts.forEach(jsonProduct => {
+    try {
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      convertedProducts.push(convertedProduct);
+      globalIndex++;
+    } catch (error) {
+      console.warn('Ошибка при конвертации продукта:', error);
+    }
   });
 
-  // Затем обрабатываем кастомные товары
+  // Добавляем кастомные товары
   const customProducts = customSneakersProducts as ProductFromJSON[];
   customProducts.forEach(jsonProduct => {
     try {
@@ -164,6 +127,7 @@ const loadAllProducts = (): Product[] => {
     }
   });
 
+  console.log(`Загружено ${convertedProducts.length} товаров из смешанного файла`);
   return convertedProducts;
 };
 

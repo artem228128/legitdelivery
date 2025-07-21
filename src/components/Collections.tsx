@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -338,9 +338,23 @@ const hiddenCollections = [
   }
 ];
 
+// Функция для перемешивания массива
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const Collections: React.FC = () => {
   const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Перемешиваем коллекции при каждом рендере компонента
+  const shuffledInitialCollections = useMemo(() => shuffleArray(initialCollections), []);
+  const shuffledHiddenCollections = useMemo(() => shuffleArray(hiddenCollections), []);
 
   const handleShowMore = () => {
     setLoading(true);
@@ -359,7 +373,7 @@ const Collections: React.FC = () => {
         </CollectionsHeader>
         
         <CollectionsGrid>
-          {initialCollections.map(collection => (
+          {shuffledInitialCollections.map(collection => (
             <CollectionCard key={collection.id} to={collection.link}>
               <CollectionImage bgImage={collection.image}>
                 <CollectionOverlay>
@@ -376,7 +390,7 @@ const Collections: React.FC = () => {
         </LoadMoreButton>
         
         <HiddenCollectionsGrid isVisible={showMore}>
-          {hiddenCollections.map(collection => (
+          {shuffledHiddenCollections.map(collection => (
             <CollectionCard key={collection.id} to={collection.link}>
               <CollectionImage bgImage={collection.image}>
                 <CollectionOverlay>
