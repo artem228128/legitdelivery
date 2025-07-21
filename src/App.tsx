@@ -83,10 +83,6 @@ const MainContent = styled.main`
 `;
 
 function App() {
-  React.useEffect(() => {
-    console.log('App mounted, current path:', window.location.pathname);
-  }, []);
-
   return (
     <CartProvider>
       <Router>
