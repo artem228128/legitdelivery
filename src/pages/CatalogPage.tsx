@@ -763,22 +763,22 @@ const CatalogPage: React.FC = () => {
       // Обновляем URL при изменении фильтров
       const newSearchParams = new URLSearchParams();
       
-      // Добавляем бренды в URL
-      if (newFilters.brands.length > 0) {
+      // Добавляем бренды в URL только если они есть
+      if (newFilters.brands && newFilters.brands.length > 0) {
         newFilters.brands.forEach(brand => {
           newSearchParams.append('brand', brand);
         });
       }
       
-      // Добавляем категории в URL
-      if (newFilters.categories.length > 0) {
+      // Добавляем категории в URL только если они есть
+      if (newFilters.categories && newFilters.categories.length > 0) {
         newFilters.categories.forEach(category => {
           newSearchParams.append('category', category);
         });
       }
       
-      // Добавляем модели в URL
-      if (newFilters.models.length > 0) {
+      // Добавляем модели в URL только если они есть
+      if (newFilters.models && newFilters.models.length > 0) {
         newFilters.models.forEach(model => {
           newSearchParams.append('model', model);
         });
@@ -790,10 +790,24 @@ const CatalogPage: React.FC = () => {
         newSearchParams.set('search', currentSearch);
       }
       
-      // Сохраняем фильтр если есть
+      // Сохраняем специальный фильтр если есть (new, hits)
       const currentFilter = searchParams.get('filter');
       if (currentFilter) {
         newSearchParams.set('filter', currentFilter);
+      }
+      
+      // Сохраняем страницу только если есть активные фильтры, иначе сбрасываем на 1
+      const hasActiveFilters = newFilters.brands.length > 0 || 
+                              newFilters.categories.length > 0 || 
+                              newFilters.models.length > 0 ||
+                              currentSearch || 
+                              currentFilter;
+      
+      if (hasActiveFilters) {
+        const currentPage = searchParams.get('page');
+        if (currentPage && currentPage !== '1') {
+          newSearchParams.set('page', currentPage);
+        }
       }
       
       setSearchParams(newSearchParams);
@@ -820,8 +834,15 @@ const CatalogPage: React.FC = () => {
     });
     setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
-    setSearchParams({});
-  }, [setSearchParams]);
+    
+    // Очищаем URL, но сохраняем поиск если есть
+    const newSearchParams = new URLSearchParams();
+    const currentSearch = searchParams.get('search');
+    if (currentSearch) {
+      newSearchParams.set('search', currentSearch);
+    }
+    setSearchParams(newSearchParams);
+  }, [setSearchParams, searchParams]);
 
   const toggleFavorite = useCallback((productId: string, e: React.MouseEvent) => {
     e.preventDefault();
