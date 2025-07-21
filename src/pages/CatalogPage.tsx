@@ -769,6 +769,9 @@ const CatalogPage: React.FC = () => {
       console.log('New filters for URL update:', newFilters);
       const newSearchParams = new URLSearchParams();
       
+      // Сначала очищаем все параметры фильтров
+      // Не копируем старые brand/category/model параметры
+      
       // Добавляем бренды в URL только если они есть
       if (newFilters.brands && newFilters.brands.length > 0) {
         console.log('Adding brands to URL:', newFilters.brands);
@@ -793,31 +796,19 @@ const CatalogPage: React.FC = () => {
         });
       }
       
-      // Сохраняем поиск если есть
+      // Сохраняем НЕ-фильтровые параметры
       const currentSearch = searchParams.get('search');
       if (currentSearch) {
         newSearchParams.set('search', currentSearch);
       }
       
-      // Сохраняем специальный фильтр если есть (new, hits)
       const currentFilter = searchParams.get('filter');
       if (currentFilter) {
         newSearchParams.set('filter', currentFilter);
       }
       
-      // Сохраняем страницу только если есть активные фильтры, иначе сбрасываем на 1
-      const hasActiveFilters = newFilters.brands.length > 0 || 
-                              newFilters.categories.length > 0 || 
-                              newFilters.models.length > 0 ||
-                              currentSearch || 
-                              currentFilter;
-      
-      if (hasActiveFilters) {
-        const currentPage = searchParams.get('page');
-        if (currentPage && currentPage !== '1') {
-          newSearchParams.set('page', currentPage);
-        }
-      }
+      // НЕ сохраняем page при изменении фильтров - всегда сбрасываем на 1
+      // Страницу обновит отдельная логика пагинации
       
       console.log('Final URL params:', newSearchParams.toString());
       setSearchParams(newSearchParams);
