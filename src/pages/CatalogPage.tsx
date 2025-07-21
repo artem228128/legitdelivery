@@ -516,9 +516,9 @@ const CatalogPage: React.FC = () => {
   });
   
   const [filters, setFilters] = useState<FilterOptions>({
-    categories: searchParams.get('category') ? [searchParams.get('category')!] : [],
-    brands: searchParams.get('brand') ? [searchParams.get('brand')!] : [],
-    models: searchParams.get('model') ? [searchParams.get('model')!] : [],
+    categories: [],
+    brands: [],
+    models: [],
     priceRange: [0, 25000],
     sizes: [],
     inStock: true
@@ -670,165 +670,106 @@ const CatalogPage: React.FC = () => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // Флаг для предотвращения циклических обновлений
-  const isInitializingFromUrl = useRef(false);
+  // Простая функция для обновления URL
+  const updateUrl = useCallback((newFilters: FilterOptions) => {
+    const params = new URLSearchParams();
+    
+    // Сохраняем поиск и специальные фильтры
+    const search = searchParams.get('search');
+    const filter = searchParams.get('filter');
+    if (search) params.set('search', search);
+    if (filter) params.set('filter', filter);
+    
+    // Добавляем активные фильтры
+    newFilters.brands.forEach(brand => params.append('brand', brand));
+    newFilters.categories.forEach(category => params.append('category', category));
+    newFilters.models.forEach(model => params.append('model', model));
+    
+    console.log('Updating URL:', params.toString());
+    setSearchParams(params);
+  }, [searchParams, setSearchParams]);
 
-  // Синхронизация URL с состоянием фильтров
+  // Инициализация фильтров из URL при загрузке компонента
   useEffect(() => {
-    // Не обновляем URL если мы сейчас инициализируемся из URL
-    if (isInitializingFromUrl.current) {
-      console.log('Skipping URL update - initializing from URL');
-      return;
+    console.log('Loading filters from URL...');
+    const brands = searchParams.getAll('brand');
+    const categories = searchParams.getAll('category');
+    const models = searchParams.getAll('model');
+    const page = searchParams.get('page');
+    
+    console.log('URL params:', { brands, categories, models, page });
+    
+    setFilters({
+      categories,
+      brands,
+      models,
+      priceRange: [0, 25000],
+      sizes: [],
+      inStock: true
+    });
+    
+    if (page) {
+      const pageNumber = parseInt(page, 10);
+      if (pageNumber > 0) setCurrentPage(pageNumber);
     }
-    
-    const newSearchParams = new URLSearchParams();
-    
-    // Добавляем фильтры в URL
-    if (filters.brands && filters.brands.length > 0) {
-      filters.brands.forEach(brand => {
-        newSearchParams.append('brand', brand);
-      });
-    }
-    
-    if (filters.categories && filters.categories.length > 0) {
-      filters.categories.forEach(category => {
-        newSearchParams.append('category', category);
-      });
-    }
-    
-    if (filters.models && filters.models.length > 0) {
-      filters.models.forEach(model => {
-        newSearchParams.append('model', model);
-      });
-    }
-    
-    // Сохраняем НЕ-фильтровые параметры
-    const currentSearch = searchParams.get('search');
-    if (currentSearch) {
-      newSearchParams.set('search', currentSearch);
-    }
-    
-    const currentFilter = searchParams.get('filter');
-    if (currentFilter) {
-      newSearchParams.set('filter', currentFilter);
-    }
-    
-    // Обновляем URL только если параметры изменились
-    const newUrlString = newSearchParams.toString();
-    const currentUrlString = searchParams.toString().replace(/&?page=\d+/, ''); // убираем page для сравнения
-    
-    if (newUrlString !== currentUrlString) {
-      console.log('Updating URL from:', currentUrlString, 'to:', newUrlString);
-      setSearchParams(newSearchParams);
-    }
-  }, [filters.brands, filters.categories, filters.models]);
+  }, []); // Только при первой загрузке
 
-  // Сброс страницы при изменении фильтров (но не при обычной пагинации)
+  // Сброс страницы при изменении фильтров
   const prevFiltersRef = useRef(filters);
-  const prevSortByRef = useRef(sortBy);
-  
   useEffect(() => {
-    // Проверяем, действительно ли изменились фильтры или сортировка
     const filtersChanged = JSON.stringify(prevFiltersRef.current) !== JSON.stringify(filters);
-    const sortByChanged = JSON.stringify(prevSortByRef.current) !== JSON.stringify(sortBy);
-    
-    if (filtersChanged || sortByChanged) {
-      // Сбрасываем на первую страницу только при изменении фильтров/сортировки
+    if (filtersChanged && JSON.stringify(prevFiltersRef.current) !== JSON.stringify({
+      categories: [],
+      brands: [],
+      models: [],
+      priceRange: [0, 25000],
+      sizes: [],
+      inStock: true
+    })) {
       updatePage(1);
-      
-      // Обновляем ref для следующего сравнения
       prevFiltersRef.current = filters;
-      prevSortByRef.current = sortBy;
     }
-  }, [filters, sortBy, updatePage]);
+  }, [filters, updatePage]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
-  // Инициализация фильтров из URL - реагируем на изменения URL
-  useEffect(() => {
-    console.log('Initializing filters from URL...');
-    const brandParams = searchParams.getAll('brand');
-    const categoryParams = searchParams.getAll('category');
-    const modelParams = searchParams.getAll('model');
-    console.log('URL params:', { brandParams, categoryParams, modelParams });
-    
-    // Устанавливаем флаг что мы инициализируемся из URL
-    isInitializingFromUrl.current = true;
-    
-    // Всегда синхронизируем фильтры с URL (даже если параметры пустые)
-    console.log('Setting filters from URL');
-    setFilters(prev => ({
-      ...prev,
-      brands: brandParams,
-      categories: categoryParams,
-      models: modelParams
-    }));
-    
-    // Сбрасываем флаг через небольшую задержку
-    setTimeout(() => {
-      isInitializingFromUrl.current = false;
-    }, 100);
-  }, [searchParams.get('brand'), searchParams.get('category'), searchParams.get('model')]); // Реагируем на изменения URL параметров
-
-  // Синхронизация currentPage с URL только при загрузке
-  useEffect(() => {
-    const pageParam = searchParams.get('page');
-    const pageNumber = pageParam ? parseInt(pageParam, 10) : 1;
-    if (pageNumber !== currentPage && pageNumber > 0) {
-      setCurrentPage(pageNumber);
-    }
-  }, [searchParams.get('page')]);
-
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
     console.log('Filter change:', key, value);
+    
     setFilters(prev => {
-      console.log('Previous filters:', prev);
       let newFilters;
       
       if (key === 'priceRange') {
-        // Специальная обработка для диапазона цен
         const [min, max] = value;
         const minPrice = isNaN(min) ? 0 : Math.max(0, min);
         const maxPrice = isNaN(max) ? 25000 : Math.max(minPrice, max);
-        
-        newFilters = {
-          ...prev,
-          priceRange: [minPrice, maxPrice] as [number, number]
-        };
+        newFilters = { ...prev, priceRange: [minPrice, maxPrice] as [number, number] };
       } else if (key === 'brands') {
-        // При изменении бренда сбрасываем модели
-        const array = prev[key] as any[];
-        const newArray = array.includes(value)
+        const array = prev[key] as string[];
+        const newArray = array.includes(value) 
           ? array.filter(item => item !== value)
           : [...array, value];
-        
-        newFilters = {
-          ...prev,
-          [key]: newArray,
-          models: [] // Сбрасываем выбранные модели
-        };
+        newFilters = { ...prev, [key]: newArray, models: [] };
       } else if (Array.isArray(prev[key])) {
-        const array = prev[key] as any[];
+        const array = prev[key] as string[];
         const newArray = array.includes(value)
           ? array.filter(item => item !== value)
           : [...array, value];
-        newFilters = {
-          ...prev,
-          [key]: newArray
-        };
+        newFilters = { ...prev, [key]: newArray };
       } else {
-        newFilters = {
-          ...prev,
-          [key]: value
-        };
+        newFilters = { ...prev, [key]: value };
       }
       
-      console.log('New filters state:', newFilters);
+      console.log('New filters:', newFilters);
+      
+      // СРАЗУ обновляем URL
+      updateUrl(newFilters);
+      
       return newFilters;
     });
-  }, [searchParams, setSearchParams]);
+  }, [updateUrl]);
 
   const handleSortChange = useCallback((value: string) => {
     const [sortBy, order] = value.split('-');
@@ -839,25 +780,23 @@ const CatalogPage: React.FC = () => {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setFilters({
+    const newFilters = {
       categories: [],
       brands: [],
       models: [],
-      priceRange: [0, 25000],
+      priceRange: [0, 25000] as [number, number],
       sizes: [],
       inStock: true
-    });
+    };
+    
+    console.log('Clearing filters');
+    setFilters(newFilters);
     setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
     
-    // Очищаем URL, но сохраняем поиск если есть
-    const newSearchParams = new URLSearchParams();
-    const currentSearch = searchParams.get('search');
-    if (currentSearch) {
-      newSearchParams.set('search', currentSearch);
-    }
-    setSearchParams(newSearchParams);
-  }, [setSearchParams, searchParams]);
+    // СРАЗУ обновляем URL
+    updateUrl(newFilters);
+  }, [updateUrl]);
 
   const toggleFavorite = useCallback((productId: string, e: React.MouseEvent) => {
     e.preventDefault();
