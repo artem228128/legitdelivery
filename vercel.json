@@ -27,8 +27,19 @@
       "dest": "/favicon.ico"
     },
     {
-      "src": "/manifest.json",
+      "src": "/manifest.json", 
       "dest": "/manifest.json"
+    },
+    {
+      "src": "/logo(.*)",
+      "dest": "/logo$1"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",

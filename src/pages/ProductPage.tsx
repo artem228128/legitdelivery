@@ -710,9 +710,7 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      console.log('Searching for product with ID:', id);
       const foundProduct = getProductById(id);
-      console.log('Found product:', foundProduct);
       setProduct(foundProduct || null);
       setIsLoading(false);
       

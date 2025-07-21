@@ -78,7 +78,7 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
   const price = parsePrice(jsonProduct.price);
   
   return {
-    id: isCustom ? `custom_${jsonProduct.sku || Date.now()}` : `json_${jsonProduct.sku || Date.now()}`,
+    id: isCustom ? `custom_${index}_${jsonProduct.sku || Date.now()}` : `json_${index}_${jsonProduct.sku || Date.now()}`,
     name: jsonProduct.title,
     price: price,
     originalPrice: price > 2500 ? Math.round(price * 1.2) : undefined,

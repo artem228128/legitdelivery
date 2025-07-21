@@ -18,6 +18,7 @@ import SizeGuidePage from './pages/SizeGuidePage';
 import TrackingPage from './pages/TrackingPage';
 import AdminPage from './pages/AdminPage';
 import AdminLoginPage from './pages/AdminLoginPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { CartProvider } from './context/CartContext';
 
 const GlobalStyle = createGlobalStyle`
@@ -105,7 +106,7 @@ function App() {
               <Route path="/tracking" element={<TrackingPage />} />
               <Route path="/admin-login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<AdminPage />} />
-              <Route path="*" element={<HomePage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </MainContent>
           <Footer />
