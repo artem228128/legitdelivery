@@ -737,24 +737,23 @@ const CatalogPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
-  // Инициализация фильтров из URL при первой загрузке
+  // Инициализация фильтров из URL - реагируем на изменения URL
   useEffect(() => {
     console.log('Initializing filters from URL...');
-    const brandParam = searchParams.get('brand');
-    const categoryParam = searchParams.get('category');
-    const modelParam = searchParams.get('model');
-    console.log('URL params:', { brandParam, categoryParam, modelParam });
+    const brandParams = searchParams.getAll('brand');
+    const categoryParams = searchParams.getAll('category');
+    const modelParams = searchParams.getAll('model');
+    console.log('URL params:', { brandParams, categoryParams, modelParams });
     
-    if (brandParam || categoryParam || modelParam) {
-      console.log('Setting filters from URL');
-      setFilters(prev => ({
-        ...prev,
-        brands: brandParam ? [brandParam] : [],
-        categories: categoryParam ? [categoryParam] : [],
-        models: modelParam ? [modelParam] : []
-      }));
-    }
-  }, []); // Только при первой загрузке
+    // Всегда синхронизируем фильтры с URL (даже если параметры пустые)
+    console.log('Setting filters from URL');
+    setFilters(prev => ({
+      ...prev,
+      brands: brandParams,
+      categories: categoryParams,
+      models: modelParams
+    }));
+  }, [searchParams.get('brand'), searchParams.get('category'), searchParams.get('model')]); // Реагируем на изменения URL параметров
 
   // Синхронизация currentPage с URL только при загрузке
   useEffect(() => {
