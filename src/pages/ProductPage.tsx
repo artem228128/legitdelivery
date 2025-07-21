@@ -710,13 +710,18 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
+      console.log('Loading product with ID:', id);
       const foundProduct = getProductById(id);
+      console.log('Found product:', foundProduct);
       setProduct(foundProduct || null);
       setIsLoading(false);
       
       if (foundProduct) {
         setSelectedColor(foundProduct.colors?.[0] || '');
       }
+    } else {
+      console.log('No product ID provided');
+      setIsLoading(false);
     }
   }, [id]);
 
