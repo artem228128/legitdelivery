@@ -2,7 +2,7 @@
   "name": "legitdelivery",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "/",
   "dependencies": {
     "@supabase/supabase-js": "^2.52.0",
     "@testing-library/dom": "^10.4.0",
