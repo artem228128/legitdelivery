@@ -505,7 +505,10 @@ const CatalogPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageParam = searchParams.get('page');
+    return pageParam ? parseInt(pageParam, 10) : 1;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('favorites');
@@ -551,6 +554,18 @@ const CatalogPage: React.FC = () => {
   }, [filters.brands]);
 
   const models = filteredModels;
+
+  // Функция для обновления страницы в URL
+  const updatePage = useCallback((page: number) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      newSearchParams.delete('page');
+    } else {
+      newSearchParams.set('page', page.toString());
+    }
+    setSearchParams(newSearchParams);
+    setCurrentPage(page);
+  }, [searchParams, setSearchParams]);
 
   // Мемоизированная фильтрация продуктов
   const filteredProducts = useMemo(() => {
@@ -657,8 +672,20 @@ const CatalogPage: React.FC = () => {
 
   // Сброс страницы при изменении фильтров
   useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, sortBy, searchParams]);
+    const currentPageFromUrl = searchParams.get('page');
+    const pageNumber = currentPageFromUrl ? parseInt(currentPageFromUrl, 10) : 1;
+    
+    // Проверяем, изменились ли фильтры или сортировка (не включая page параметр)
+    const urlParamsWithoutPage = new URLSearchParams(searchParams.toString());
+    urlParamsWithoutPage.delete('page');
+    
+    // Если есть другие параметры кроме page, сбрасываем на первую страницу
+    if (urlParamsWithoutPage.toString() !== '') {
+      if (pageNumber !== 1 && currentPage !== 1) {
+        updatePage(1);
+      }
+    }
+  }, [filters, sortBy]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -671,6 +698,15 @@ const CatalogPage: React.FC = () => {
       brands: brandParam ? [brandParam] : []
     }));
     // eslint-disable-next-line
+  }, [searchParams]);
+
+  // Синхронизация currentPage с URL
+  useEffect(() => {
+    const pageParam = searchParams.get('page');
+    const pageNumber = pageParam ? parseInt(pageParam, 10) : 1;
+    if (pageNumber !== currentPage) {
+      setCurrentPage(pageNumber);
+    }
   }, [searchParams]);
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
@@ -1034,13 +1070,13 @@ const CatalogPage: React.FC = () => {
               {totalPages > 1 && (
                 <Pagination>
                   <PageButton 
-                    onClick={() => setCurrentPage(1)}
+                    onClick={() => updatePage(1)}
                     disabled={currentPage === 1}
                   >
                     ««
                   </PageButton>
                   <PageButton 
-                    onClick={() => setCurrentPage(currentPage - 1)}
+                    onClick={() => updatePage(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     «
@@ -1062,7 +1098,7 @@ const CatalogPage: React.FC = () => {
                       <PageButton
                         key={pageNumber}
                         active={pageNumber === currentPage}
-                        onClick={() => setCurrentPage(pageNumber)}
+                        onClick={() => updatePage(pageNumber)}
                       >
                         {pageNumber}
                       </PageButton>
@@ -1070,13 +1106,13 @@ const CatalogPage: React.FC = () => {
                   })}
                   
                   <PageButton 
-                    onClick={() => setCurrentPage(currentPage + 1)}
+                    onClick={() => updatePage(currentPage + 1)}
                     disabled={currentPage === totalPages}
                   >
                     »
                   </PageButton>
                   <PageButton 
-                    onClick={() => setCurrentPage(totalPages)}
+                    onClick={() => updatePage(totalPages)}
                     disabled={currentPage === totalPages}
                   >
                     »»
