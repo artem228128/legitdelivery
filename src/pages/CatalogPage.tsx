@@ -670,8 +670,17 @@ const CatalogPage: React.FC = () => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
+  // Флаг для предотвращения циклических обновлений
+  const isInitializingFromUrl = useRef(false);
+
   // Синхронизация URL с состоянием фильтров
   useEffect(() => {
+    // Не обновляем URL если мы сейчас инициализируемся из URL
+    if (isInitializingFromUrl.current) {
+      console.log('Skipping URL update - initializing from URL');
+      return;
+    }
+    
     const newSearchParams = new URLSearchParams();
     
     // Добавляем фильтры в URL
@@ -712,7 +721,7 @@ const CatalogPage: React.FC = () => {
       console.log('Updating URL from:', currentUrlString, 'to:', newUrlString);
       setSearchParams(newSearchParams);
     }
-  }, [filters.brands, filters.categories, filters.models, searchParams, setSearchParams]);
+  }, [filters.brands, filters.categories, filters.models]);
 
   // Сброс страницы при изменении фильтров (но не при обычной пагинации)
   const prevFiltersRef = useRef(filters);
@@ -745,6 +754,9 @@ const CatalogPage: React.FC = () => {
     const modelParams = searchParams.getAll('model');
     console.log('URL params:', { brandParams, categoryParams, modelParams });
     
+    // Устанавливаем флаг что мы инициализируемся из URL
+    isInitializingFromUrl.current = true;
+    
     // Всегда синхронизируем фильтры с URL (даже если параметры пустые)
     console.log('Setting filters from URL');
     setFilters(prev => ({
@@ -753,6 +765,11 @@ const CatalogPage: React.FC = () => {
       categories: categoryParams,
       models: modelParams
     }));
+    
+    // Сбрасываем флаг через небольшую задержку
+    setTimeout(() => {
+      isInitializingFromUrl.current = false;
+    }, 100);
   }, [searchParams.get('brand'), searchParams.get('category'), searchParams.get('model')]); // Реагируем на изменения URL параметров
 
   // Синхронизация currentPage с URL только при загрузке
