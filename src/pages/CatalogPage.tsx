@@ -670,6 +670,50 @@ const CatalogPage: React.FC = () => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
+  // Синхронизация URL с состоянием фильтров
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams();
+    
+    // Добавляем фильтры в URL
+    if (filters.brands && filters.brands.length > 0) {
+      filters.brands.forEach(brand => {
+        newSearchParams.append('brand', brand);
+      });
+    }
+    
+    if (filters.categories && filters.categories.length > 0) {
+      filters.categories.forEach(category => {
+        newSearchParams.append('category', category);
+      });
+    }
+    
+    if (filters.models && filters.models.length > 0) {
+      filters.models.forEach(model => {
+        newSearchParams.append('model', model);
+      });
+    }
+    
+    // Сохраняем НЕ-фильтровые параметры
+    const currentSearch = searchParams.get('search');
+    if (currentSearch) {
+      newSearchParams.set('search', currentSearch);
+    }
+    
+    const currentFilter = searchParams.get('filter');
+    if (currentFilter) {
+      newSearchParams.set('filter', currentFilter);
+    }
+    
+    // Обновляем URL только если параметры изменились
+    const newUrlString = newSearchParams.toString();
+    const currentUrlString = searchParams.toString().replace(/&?page=\d+/, ''); // убираем page для сравнения
+    
+    if (newUrlString !== currentUrlString) {
+      console.log('Updating URL from:', currentUrlString, 'to:', newUrlString);
+      setSearchParams(newSearchParams);
+    }
+  }, [filters.brands, filters.categories, filters.models, searchParams, setSearchParams]);
+
   // Сброс страницы при изменении фильтров (но не при обычной пагинации)
   const prevFiltersRef = useRef(filters);
   const prevSortByRef = useRef(sortBy);
@@ -765,53 +809,7 @@ const CatalogPage: React.FC = () => {
         };
       }
       
-      // Обновляем URL при изменении фильтров
-      console.log('New filters for URL update:', newFilters);
-      const newSearchParams = new URLSearchParams();
-      
-      // Сначала очищаем все параметры фильтров
-      // Не копируем старые brand/category/model параметры
-      
-      // Добавляем бренды в URL только если они есть
-      if (newFilters.brands && newFilters.brands.length > 0) {
-        console.log('Adding brands to URL:', newFilters.brands);
-        newFilters.brands.forEach(brand => {
-          newSearchParams.append('brand', brand);
-        });
-      } else {
-        console.log('No brands to add to URL');
-      }
-      
-      // Добавляем категории в URL только если они есть
-      if (newFilters.categories && newFilters.categories.length > 0) {
-        newFilters.categories.forEach(category => {
-          newSearchParams.append('category', category);
-        });
-      }
-      
-      // Добавляем модели в URL только если они есть
-      if (newFilters.models && newFilters.models.length > 0) {
-        newFilters.models.forEach(model => {
-          newSearchParams.append('model', model);
-        });
-      }
-      
-      // Сохраняем НЕ-фильтровые параметры
-      const currentSearch = searchParams.get('search');
-      if (currentSearch) {
-        newSearchParams.set('search', currentSearch);
-      }
-      
-      const currentFilter = searchParams.get('filter');
-      if (currentFilter) {
-        newSearchParams.set('filter', currentFilter);
-      }
-      
-      // НЕ сохраняем page при изменении фильтров - всегда сбрасываем на 1
-      // Страницу обновит отдельная логика пагинации
-      
-      console.log('Final URL params:', newSearchParams.toString());
-      setSearchParams(newSearchParams);
+      console.log('New filters state:', newFilters);
       return newFilters;
     });
   }, [searchParams, setSearchParams]);
