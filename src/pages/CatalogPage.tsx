@@ -519,7 +519,7 @@ const CatalogPage: React.FC = () => {
     categories: [],
     brands: [],
     models: [],
-    priceRange: [0, 25000],
+    priceRange: [0, 100000],
     sizes: [],
     inStock: true
   });
@@ -703,7 +703,7 @@ const CatalogPage: React.FC = () => {
       categories,
       brands,
       models,
-      priceRange: [0, 25000],
+      priceRange: [0, 100000],
       sizes: [],
       inStock: true
     });
@@ -722,7 +722,7 @@ const CatalogPage: React.FC = () => {
       categories: [],
       brands: [],
       models: [],
-      priceRange: [0, 25000],
+      priceRange: [0, 100000],
       sizes: [],
       inStock: true
     })) {
@@ -744,7 +744,7 @@ const CatalogPage: React.FC = () => {
       if (key === 'priceRange') {
         const [min, max] = value;
         const minPrice = isNaN(min) ? 0 : Math.max(0, min);
-        const maxPrice = isNaN(max) ? 25000 : Math.max(minPrice, max);
+        const maxPrice = isNaN(max) ? 100000 : Math.max(minPrice, max);
         newFilters = { ...prev, priceRange: [minPrice, maxPrice] as [number, number] };
       } else if (key === 'brands') {
         const array = prev[key] as string[];
@@ -784,7 +784,7 @@ const CatalogPage: React.FC = () => {
       categories: [],
       brands: [],
       models: [],
-      priceRange: [0, 25000] as [number, number],
+      priceRange: [0, 100000] as [number, number],
       sizes: [],
       inStock: true
     };
@@ -830,7 +830,7 @@ const CatalogPage: React.FC = () => {
       filters.models.length > 0 ||
       (filters.sizes && filters.sizes.length > 0) ||
       (filters.priceRange && filters.priceRange.length === 2 && 
-       (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 25000)) ||
+       (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 100000)) ||
       searchParams.get('search') ||
       searchParams.get('filter') ||
       showFavoritesOnly
@@ -953,18 +953,18 @@ const CatalogPage: React.FC = () => {
                     className="apply-price"
                     onClick={() => {
                       const minValue = parseInt(priceInputs.min) || 0;
-                      const maxValue = parseInt(priceInputs.max) || 25000;
+                      const maxValue = parseInt(priceInputs.max) || 100000;
                       handleFilterChange('priceRange', [minValue, maxValue]);
                     }}
                     disabled={!priceInputs.min && !priceInputs.max}
                   >
                     Застосувати
                   </button>
-                  {(filters.priceRange![0] !== 0 || filters.priceRange![1] !== 25000) && (
+                  {(filters.priceRange![0] !== 0 || filters.priceRange![1] !== 100000) && (
                     <button 
                       className="reset-price"
                       onClick={() => {
-                        handleFilterChange('priceRange', [0, 25000]);
+                        handleFilterChange('priceRange', [0, 100000]);
                         setPriceInputs({ min: '', max: '' });
                       }}
                     >
