@@ -570,43 +570,61 @@ const CatalogPage: React.FC = () => {
     if (!releaseDate) return false;
     
     try {
-      // Пробуем разные форматы даты для лучшей совместимости
+      // Улучшенная обработка даты для iPhone
       let release: Date;
       
-      // Если дата в формате ISO (YYYY-MM-DD)
-      if (/^\d{4}-\d{2}-\d{2}$/.test(releaseDate)) {
-        release = new Date(releaseDate + 'T00:00:00Z');
+      // Пробуем разные форматы даты для лучшей совместимости с iPhone
+      if (releaseDate.includes('-')) {
+        // Проверяем формат MM-DD-YYYY (как в данных)
+        const parts = releaseDate.split('-');
+        if (parts.length === 3) {
+          const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
+          const day = parseInt(parts[1]);
+          const year = parseInt(parts[2]);
+          release = new Date(year, month, day, 0, 0, 0, 0);
+        } else {
+          // Формат YYYY-MM-DD - добавляем время для лучшей совместимости
+          release = new Date(releaseDate + 'T00:00:00.000Z');
+        }
+      } else if (releaseDate.includes('/')) {
+        // Формат MM/DD/YYYY или DD/MM/YYYY
+        const parts = releaseDate.split('/');
+        if (parts.length === 3) {
+          // Предполагаем формат MM/DD/YYYY для лучшей совместимости
+          const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
+          const day = parseInt(parts[1]);
+          const year = parseInt(parts[2]);
+          release = new Date(year, month, day, 0, 0, 0, 0);
+        } else {
+          release = new Date(releaseDate);
+        }
       } else {
+        // Пробуем стандартный парсинг
         release = new Date(releaseDate);
       }
       
       if (isNaN(release.getTime())) {
-        console.warn('Invalid release date:', releaseDate);
         return false;
       }
       
-      // Базовая дата: 23 июля 2025 года (UTC)
-      const baseDate = new Date('2025-07-23T00:00:00Z');
+      // Базовая дата: 23 июля 2025 года
+      const baseDate = new Date(2025, 6, 23, 23, 59, 59, 999); // конец дня
       // 3 месяца назад от базовой даты
       const threeMonthsAgo = new Date(baseDate);
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      threeMonthsAgo.setDate(1); // начало месяца
+      threeMonthsAgo.setHours(0, 0, 0, 0); // начало дня
       
       // Временная проверка: если текущая дата меньше базовой, используем текущую дату
       const now = new Date();
       const effectiveBaseDate = now < baseDate ? now : baseDate;
       const effectiveThreeMonthsAgo = new Date(effectiveBaseDate);
       effectiveThreeMonthsAgo.setMonth(effectiveThreeMonthsAgo.getMonth() - 3);
-      
-      // Для отладки
-      console.log('Checking release date:', releaseDate);
-      console.log('Release date:', release.toISOString());
-      console.log('Effective three months ago:', effectiveThreeMonthsAgo.toISOString());
-      console.log('Effective base date:', effectiveBaseDate.toISOString());
-      console.log('Is new release:', release >= effectiveThreeMonthsAgo && release <= effectiveBaseDate);
+      effectiveThreeMonthsAgo.setDate(1); // начало месяца
+      effectiveThreeMonthsAgo.setHours(0, 0, 0, 0); // начало дня
       
       return release >= effectiveThreeMonthsAgo && release <= effectiveBaseDate;
     } catch (error) {
-      console.error('Error checking new release:', releaseDate, error);
       return false;
     }
   };

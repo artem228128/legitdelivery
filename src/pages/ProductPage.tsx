@@ -1022,8 +1022,38 @@ const ProductPage: React.FC = () => {
     if (!dateString) return '';
     
     try {
-      // Простая и надежная обработка даты
-      const date = new Date(dateString);
+      // Улучшенная обработка даты для iPhone
+      let date: Date;
+      
+      // Пробуем разные форматы даты для лучшей совместимости с iPhone
+      if (dateString.includes('-')) {
+        // Проверяем формат MM-DD-YYYY (как в данных)
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+          const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
+          const day = parseInt(parts[1]);
+          const year = parseInt(parts[2]);
+          date = new Date(year, month, day, 0, 0, 0, 0);
+        } else {
+          // Формат YYYY-MM-DD - добавляем время для лучшей совместимости
+          date = new Date(dateString + 'T00:00:00.000Z');
+        }
+      } else if (dateString.includes('/')) {
+        // Формат MM/DD/YYYY или DD/MM/YYYY
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+          // Предполагаем формат MM/DD/YYYY для лучшей совместимости
+          const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
+          const day = parseInt(parts[1]);
+          const year = parseInt(parts[2]);
+          date = new Date(year, month, day, 0, 0, 0, 0);
+        } else {
+          date = new Date(dateString);
+        }
+      } else {
+        // Пробуем стандартный парсинг
+        date = new Date(dateString);
+      }
       
       // Если дата невалидная, возвращаем исходную строку
       if (isNaN(date.getTime())) {
