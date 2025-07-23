@@ -570,17 +570,43 @@ const CatalogPage: React.FC = () => {
     if (!releaseDate) return false;
     
     try {
-      const release = new Date(releaseDate);
-      if (isNaN(release.getTime())) return false;
+      // Пробуем разные форматы даты для лучшей совместимости
+      let release: Date;
       
-      // Базовая дата: 23 июля 2025 года
-      const baseDate = new Date('2025-07-23');
+      // Если дата в формате ISO (YYYY-MM-DD)
+      if (/^\d{4}-\d{2}-\d{2}$/.test(releaseDate)) {
+        release = new Date(releaseDate + 'T00:00:00Z');
+      } else {
+        release = new Date(releaseDate);
+      }
+      
+      if (isNaN(release.getTime())) {
+        console.warn('Invalid release date:', releaseDate);
+        return false;
+      }
+      
+      // Базовая дата: 23 июля 2025 года (UTC)
+      const baseDate = new Date('2025-07-23T00:00:00Z');
       // 3 месяца назад от базовой даты
       const threeMonthsAgo = new Date(baseDate);
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
       
-      return release >= threeMonthsAgo && release <= baseDate;
+      // Временная проверка: если текущая дата меньше базовой, используем текущую дату
+      const now = new Date();
+      const effectiveBaseDate = now < baseDate ? now : baseDate;
+      const effectiveThreeMonthsAgo = new Date(effectiveBaseDate);
+      effectiveThreeMonthsAgo.setMonth(effectiveThreeMonthsAgo.getMonth() - 3);
+      
+      // Для отладки
+      console.log('Checking release date:', releaseDate);
+      console.log('Release date:', release.toISOString());
+      console.log('Effective three months ago:', effectiveThreeMonthsAgo.toISOString());
+      console.log('Effective base date:', effectiveBaseDate.toISOString());
+      console.log('Is new release:', release >= effectiveThreeMonthsAgo && release <= effectiveBaseDate);
+      
+      return release >= effectiveThreeMonthsAgo && release <= effectiveBaseDate;
     } catch (error) {
+      console.error('Error checking new release:', releaseDate, error);
       return false;
     }
   };
