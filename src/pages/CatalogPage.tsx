@@ -936,7 +936,26 @@ const CatalogPage: React.FC = () => {
     'New Releases',
     'Premium'
   ];
-  const sizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
+  // Функция для получения размеров в зависимости от категории
+  const getSizesForCategory = (category?: string): string[] => {
+    if (category === 'Худі/світшоти') {
+      return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    }
+    // Для кросівок и других категорий (включая Off-White)
+    return ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
+  };
+
+  // Получаем размеры на основе активных фильтров категорий
+  const getAvailableSizes = (): string[] => {
+    if (filters.categories.length > 0) {
+      // Если выбраны категории, показываем размеры для первой категории
+      return getSizesForCategory(filters.categories[0]);
+    }
+    // Если категории не выбраны, показываем размеры для кросівок (по умолчанию)
+    return getSizesForCategory('Кросівки');
+  };
+
+  const sizes = getAvailableSizes();
 
   const [openSections, setOpenSections] = useState({
     categories: false,

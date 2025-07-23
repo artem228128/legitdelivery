@@ -928,7 +928,16 @@ const ProductPage: React.FC = () => {
   const [iconSize, setIconSize] = useState(22);
 
   // Все возможные размеры обуви
-  const allSizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
+  // Функция для получения размеров в зависимости от категории
+  const getSizesForCategory = (category?: string): string[] => {
+    if (category === 'Худі/світшоти') {
+      return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    }
+    // Для кросівок и других категорий (включая Off-White)
+    return ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
+  };
+
+  const allSizes = getSizesForCategory(product?.category);
 
   useEffect(() => {
     if (id) {

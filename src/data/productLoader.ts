@@ -4,6 +4,7 @@ import { getModelDescription } from './modelDescriptions';
 // Используем готовый смешанный файл вместо отдельных файлов
 import allProductsMixed from '../products_jsons/all_products_mixed.json';
 import customSneakersProducts from '../products_jsons/custom_sneakers.json';
+import hoodiesProducts from '../products_jsons/hoodies.json';
 
 // Функция для преобразования цены из строки в число (в гривнах)
 const parsePrice = (priceStr: string): number => {
@@ -13,9 +14,15 @@ const parsePrice = (priceStr: string): number => {
 };
 
 // Функция для определения категории по модели
-const getCategory = (model: string, brand: string): string => {
+const getCategory = (model: string, brand: string, type?: string): string => {
   const modelLower = model.toLowerCase();
   const brandLower = brand.toLowerCase();
+  const typeLower = type?.toLowerCase() || '';
+  
+  // Проверяем тип товара для худи
+  if (typeLower.includes('hoodie') || typeLower.includes('sweatshirt')) {
+    return 'Худі/світшоти';
+  }
   
   if (modelLower.includes('jordan') || modelLower.includes('aj')) {
     return 'Кросівки';
@@ -39,14 +46,17 @@ const getCategory = (model: string, brand: string): string => {
     return 'Кросівки';
   }
   if (brandLower.includes('off-white') || brandLower.includes('off white')) {
-    return 'Одяг';
+    return 'Кросівки'; // Off-White остается в категории кросівок
   }
   
   return 'Кросівки';
 };
 
 // Функция для генерации размеров
-const generateSizes = (): string[] => {
+const generateSizes = (category?: string): string[] => {
+  if (category === 'Худі/світшоти') {
+    return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  }
   return ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
 };
 
@@ -101,11 +111,11 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     originalPrice: price > 2500 ? Math.round(price * 1.2) : undefined,
     image: jsonProduct.images[0] || '',
     images: jsonProduct.images.slice(0, 8), // Максимум 8 изображений
-    category: getCategory(jsonProduct.model, jsonProduct.brand),
+    category: getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type),
     brand: jsonProduct.brand,
     model: jsonProduct.model,
     description: jsonProduct.description || getModelDescription(jsonProduct.model),
-    sizes: generateSizes(),
+    sizes: generateSizes(getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type)),
     inStock: Math.random() > 0.1, // 90% товаров в наличии
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
@@ -145,7 +155,19 @@ const loadAllProducts = (): Product[] => {
     }
   });
 
-  console.log(`Загружено ${convertedProducts.length} товаров из смешанного файла`);
+  // Добавляем худи
+  const hoodies = hoodiesProducts as ProductFromJSON[];
+  hoodies.forEach(jsonProduct => {
+    try {
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      convertedProducts.push(convertedProduct);
+      globalIndex++;
+    } catch (error) {
+      console.warn('Ошибка при конвертации худи:', error);
+    }
+  });
+
+  console.log(`Загружено ${convertedProducts.length} товаров (смешанные + кастомные + худи)`);
   return convertedProducts;
 };
 
