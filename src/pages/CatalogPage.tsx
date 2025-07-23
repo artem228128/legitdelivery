@@ -701,14 +701,12 @@ const CatalogPage: React.FC = () => {
       console.log('After search filter:', filtered.length, 'query:', searchToUse);
     }
     
-    // Special filters
+    // Special filters (оставляем только для внутренних ссылок)
     const filter = searchParams.get('filter');
     if (filter === 'new') {
       filtered = filtered.filter(product => product.isNew);
     } else if (filter === 'hits') {
       filtered = filtered.filter(product => product.isHit);
-    } else if (filter === 'new-releases') {
-      filtered = filtered.filter(product => product.releaseDate && isNewRelease(product.releaseDate));
     }
     
     // Categories filter - используем ТОЛЬКО состояние фильтров, не URL параметры

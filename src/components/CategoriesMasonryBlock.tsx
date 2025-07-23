@@ -8,7 +8,7 @@ const categories = [
     id: 'featured',
     label: 'NEW RELEASES',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849090/categories_masonry/featured.jpg',
-    link: '/catalog?filter=new-releases',
+    link: '/catalog?category=New+Releases',
     type: 'large'
   },
   // 4 квадратних блоки
@@ -16,28 +16,28 @@ const categories = [
     id: 'sneakers',
     label: 'Кросівки',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849093/categories_masonry/sneakers.jpg',
-    link: '/catalog?category=sneakers',
+    link: '/catalog?category=Кросівки',
     type: 'square'
   },
   {
     id: 'bags',
     label: 'Сумки',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849086/categories_masonry/bags.jpg',
-    link: '/catalog?category=bags',
+    link: '/catalog?category=Сумки',
     type: 'square'
   },
   {
     id: 'tshirts',
     label: 'Футболки',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849094/categories_masonry/tshirts.jpg',
-    link: '/catalog?category=tshirts',
+    link: '/catalog?category=Футболки',
     type: 'square'
   },
   {
     id: 'accessories',
     label: 'Аксесуари',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849086/categories_masonry/accessories.png',
-    link: '/catalog?category=accessories',
+    link: '/catalog?category=Аксесуари',
     type: 'square'
   },
   // 3 горизонтальних блоки
@@ -45,7 +45,7 @@ const categories = [
     id: 'outerwear',
     label: 'Верхній одяг',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849092/categories_masonry/outerwear.png',
-    link: '/catalog?category=outerwear',
+    link: '/catalog?category=Верхній одяг',
     type: 'horizontal'
   },
   {
@@ -59,7 +59,7 @@ const categories = [
     id: 'hoodies',
     label: 'Худі/світшоти',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849091/categories_masonry/hoodies.png',
-    link: '/catalog?category=hoodies',
+    link: '/catalog?category=Худі/світшоти',
     type: 'horizontal'
   }
 ];
