@@ -565,6 +565,28 @@ const CatalogPage: React.FC = () => {
 
   const models = filteredModels;
 
+  // Функция для определения новых релизов (за последние 3 месяца от 23.7.25)
+  const isNewRelease = (releaseDate: string): boolean => {
+    if (!releaseDate) return false;
+    
+    try {
+      const release = new Date(releaseDate);
+      if (isNaN(release.getTime())) return false;
+      
+      // Базовая дата: 23 июля 2025 года
+      const baseDate = new Date('2025-07-23');
+      // 3 месяца назад от базовой даты
+      const threeMonthsAgo = new Date(baseDate);
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      
+      return release >= threeMonthsAgo && release <= baseDate;
+    } catch (error) {
+      return false;
+    }
+  };
+
+
+
   // Функция для обновления страницы в URL
   const updatePage = useCallback((page: number) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
@@ -600,6 +622,8 @@ const CatalogPage: React.FC = () => {
       filtered = filtered.filter(product => product.isNew);
     } else if (filter === 'hits') {
       filtered = filtered.filter(product => product.isHit);
+    } else if (filter === 'new-releases') {
+      filtered = filtered.filter(product => product.releaseDate && isNewRelease(product.releaseDate));
     }
     
     // Categories filter - учитываем как URL параметры, так и состояние фильтров
@@ -608,8 +632,17 @@ const CatalogPage: React.FC = () => {
       ? [categoryFromUrl, ...filters.categories]
       : filters.categories;
     
-    if (categoriesToFilter.length > 0) {
-      filtered = filtered.filter(product => categoriesToFilter.includes(product.category));
+    // Отделяем специальные категории от обычных
+    const specialCategories = categoriesToFilter.filter(cat => 
+      cat === 'New Releases' || cat === 'Преміум Бренди'
+    );
+    const regularCategories = categoriesToFilter.filter(cat => 
+      cat !== 'New Releases' && cat !== 'Преміум Бренди'
+    );
+    
+    // Применяем обычные категории
+    if (regularCategories.length > 0) {
+      filtered = filtered.filter(product => regularCategories.includes(product.category));
     }
     
     // Brands filter - учитываем как URL параметры, так и состояние фильтров
@@ -620,6 +653,21 @@ const CatalogPage: React.FC = () => {
     
     if (brandsToFilter.length > 0) {
       filtered = filtered.filter(product => brandsToFilter.includes(product.brand));
+    }
+    
+    // Применяем специальные категории после фильтрации по брендам
+    if (specialCategories.length > 0) {
+      filtered = filtered.filter(product => {
+        return specialCategories.some(category => {
+          if (category === 'New Releases') {
+            return product.releaseDate && isNewRelease(product.releaseDate);
+          }
+          if (category === 'Преміум Бренди') {
+            return product.price > 17000;
+          }
+          return false;
+        });
+      });
     }
     
     // Models filter - учитываем как URL параметры, так и состояние фильтров
@@ -840,7 +888,9 @@ const CatalogPage: React.FC = () => {
     'Футболки',
     'Аксесуари',
     'Верхній одяг',
-    'Худі/світшоти'
+    'Худі/світшоти',
+    'New Releases',
+    'Преміум Бренди'
   ];
   const sizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
 
