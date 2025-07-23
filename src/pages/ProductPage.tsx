@@ -155,15 +155,15 @@ const ImageGallery = styled.div`
   }
 `;
 
-const ThumbnailImage = styled.div<{ bgImage: string; active: boolean }>`
+const ThumbnailImage = styled.div<{ $bgImage: string; $active: boolean }>`
   width: 80px;
   height: 80px;
-  background: url(${props => props.bgImage}) center no-repeat;
+  background: url(${props => props.$bgImage}) center no-repeat;
   background-size: contain;
   background-color: #ffffff;
   border-radius: 12px;
   cursor: pointer;
-  border: 3px solid ${props => props.active ? 'var(--primary-blue)' : 'transparent'};
+  border: 3px solid ${props => props.$active ? 'var(--primary-blue)' : 'transparent'};
   transition: all 0.3s ease;
   flex-shrink: 0;
   
@@ -480,11 +480,11 @@ const SizeOptions = styled.div`
   }
 `;
 
-const SizeButton = styled.button<{ active: boolean }>`
+const SizeButton = styled.button<{ $active: boolean }>`
   padding: 10px 15px;
-  border: 2px solid ${props => props.active ? 'var(--primary-blue)' : 'var(--border-light)'};
-  background: ${props => props.active ? 'var(--primary-blue)' : 'white'};
-  color: ${props => props.active ? 'white' : 'var(--text-dark)'};
+  border: 2px solid ${props => props.$active ? 'var(--primary-blue)' : 'var(--border-light)'};
+  background: ${props => props.$active ? 'var(--primary-blue)' : 'white'};
+  color: ${props => props.$active ? 'white' : 'var(--text-dark)'};
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
@@ -537,10 +537,10 @@ const ColorOptions = styled.div`
   }
 `;
 
-const ColorButton = styled.button<{ color: string; active: boolean }>`
+const ColorButton = styled.button<{ color: string; $active: boolean }>`
   width: 40px;
   height: 40px;
-  border: 3px solid ${props => props.active ? 'var(--primary-blue)' : 'var(--border-light)'};
+  border: 3px solid ${props => props.$active ? 'var(--primary-blue)' : 'var(--border-light)'};
   background: ${props => {
     const colorMap: { [key: string]: string } = {
       'Белый': '#ffffff',
@@ -930,7 +930,7 @@ const ProductPage: React.FC = () => {
   // Все возможные размеры обуви
   // Функция для получения размеров в зависимости от категории
   const getSizesForCategory = (category?: string): string[] => {
-    if (category === 'Худі/світшоти' || category === 'Футболки') {
+    if (category === 'Худі/світшоти' || category === 'Футболки' || category === 'Верхній одяг') {
       return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     }
     // Для кросівок и других категорий (включая Off-White)
@@ -1108,8 +1108,8 @@ const ProductPage: React.FC = () => {
               {images.map((image, index) => (
                 <ThumbnailImage
                   key={index}
-                  bgImage={image}
-                  active={index === currentImageIndex}
+                  $bgImage={image}
+                  $active={index === currentImageIndex}
                   onClick={() => setCurrentImageIndex(index)}
                 />
               ))}
@@ -1153,7 +1153,7 @@ const ProductPage: React.FC = () => {
               {allSizes.map(size => (
                 <SizeButton
                   key={size}
-                  active={selectedSize === size}
+                  $active={selectedSize === size}
                   onClick={() => setSelectedSize(size)}
                 >
                   {size}
@@ -1170,7 +1170,7 @@ const ProductPage: React.FC = () => {
                   <ColorButton
                     key={color}
                     color={color}
-                    active={selectedColor === color}
+                    $active={selectedColor === color}
                     onClick={() => setSelectedColor(color)}
                   />
                 ))}

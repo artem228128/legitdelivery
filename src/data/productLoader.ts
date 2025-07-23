@@ -6,6 +6,7 @@ import allProductsMixed from '../products_jsons/all_products_mixed.json';
 import customSneakersProducts from '../products_jsons/custom_sneakers.json';
 import hoodiesProducts from '../products_jsons/hoodies.json';
 import tshirtsProducts from '../products_jsons/tshirts.json';
+import outerwearProducts from '../products_jsons/outerwear_products.json';
 
 // Функция для преобразования цены из строки в число (в гривнах)
 const parsePrice = (priceStr: string): number => {
@@ -26,8 +27,25 @@ const getCategory = (model: string, brand: string, type?: string): string => {
   }
   
   // Проверяем тип товара для футболок
-  if (typeLower.includes('t-shirt') || typeLower.includes('tshirt') || typeLower.includes('shirt')) {
+  if (typeLower.includes('t-shirt') || typeLower.includes('tshirt') || typeLower.includes('shirt') || typeLower.includes('tee')) {
     return 'Футболки';
+  }
+  
+  // Проверяем название товара для футболок (если тип не определен)
+  if (modelLower.includes('tee') || modelLower.includes('t-shirt') || modelLower.includes('tshirt')) {
+    return 'Футболки';
+  }
+  
+  // Специальная проверка для Cactus Jack by Travis Scott (обычно это футболки)
+  if (brandLower.includes('cactus jack') || brandLower.includes('travis scott')) {
+    if (modelLower.includes('tee') || modelLower.includes('shirt') || typeLower.includes('tee') || typeLower.includes('shirt')) {
+      return 'Футболки';
+    }
+  }
+  
+  // Проверяем тип товара для верхней одежды
+  if (typeLower.includes('jacket') || typeLower.includes('coat') || typeLower.includes('vest') || modelLower.includes('outerwear')) {
+    return 'Верхній одяг';
   }
   
   if (modelLower.includes('jordan') || modelLower.includes('aj')) {
@@ -60,7 +78,7 @@ const getCategory = (model: string, brand: string, type?: string): string => {
 
 // Функция для генерации размеров
 const generateSizes = (category?: string): string[] => {
-  if (category === 'Худі/світшоти' || category === 'Футболки') {
+  if (category === 'Худі/світшоти' || category === 'Футболки' || category === 'Верхній одяг') {
     return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   }
   return ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
@@ -99,15 +117,31 @@ const isHitProduct = (title: string, brand: string): boolean => {
 };
 
 // Функция для преобразования ProductFromJSON в Product
-const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom: boolean = false): Product => {
+const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom: boolean = false, source?: string): Product => {
   const price = parsePrice(jsonProduct.price);
   
-  // Используем ID из JSON файла если есть, иначе генерируем
+  // Используем ID из JSON файла если есть, иначе генерируем с уникальным префиксом
   let productId;
   if (jsonProduct.id) {
     productId = jsonProduct.id;
   } else {
-    productId = isCustom ? `custom_${jsonProduct.sku || Date.now()}` : `json_${jsonProduct.sku || Date.now()}`;
+    const prefix = source || (isCustom ? 'custom' : 'json');
+    // Используем комбинацию index и timestamp для уникальности
+    const timestamp = Date.now() + Math.random();
+    productId = `${prefix}_${jsonProduct.sku || index}_${timestamp}`;
+  }
+  
+  const category = getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type);
+  
+  // Отладочная информация для Cactus Jack товаров
+  if (jsonProduct.brand.toLowerCase().includes('cactus jack') || jsonProduct.brand.toLowerCase().includes('travis scott')) {
+    console.log('Cactus Jack product:', {
+      title: jsonProduct.title,
+      brand: jsonProduct.brand,
+      model: jsonProduct.model,
+      type: jsonProduct.type,
+      category: category
+    });
   }
   
   return {
@@ -117,13 +151,13 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     originalPrice: price > 2500 ? Math.round(price * 1.2) : undefined,
     image: jsonProduct.images[0] || '',
     images: jsonProduct.images.slice(0, 8), // Максимум 8 изображений
-    category: getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type),
+    category: category,
     brand: jsonProduct.brand,
     model: jsonProduct.model,
     description: jsonProduct.description || getModelDescription(jsonProduct.model),
     sizes: (jsonProduct as any).available_sizes?.length > 0 
       ? (jsonProduct as any).available_sizes 
-      : generateSizes(getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type)),
+      : generateSizes(category),
     inStock: Math.random() > 0.1, // 90% товаров в наличии
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
@@ -143,7 +177,7 @@ const loadAllProducts = (): Product[] => {
   // Загружаем все товары из смешанного файла
   mixedProducts.forEach(jsonProduct => {
     try {
-      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false, 'mixed');
       convertedProducts.push(convertedProduct);
       globalIndex++;
     } catch (error) {
@@ -155,7 +189,7 @@ const loadAllProducts = (): Product[] => {
   const customProducts = customSneakersProducts as ProductFromJSON[];
   customProducts.forEach(jsonProduct => {
     try {
-      const convertedProduct = convertToProduct(jsonProduct, globalIndex, true);
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, true, 'custom');
       convertedProducts.push(convertedProduct);
       globalIndex++;
     } catch (error) {
@@ -167,7 +201,7 @@ const loadAllProducts = (): Product[] => {
   const hoodies = hoodiesProducts as ProductFromJSON[];
   hoodies.forEach(jsonProduct => {
     try {
-      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false, 'hoodies');
       convertedProducts.push(convertedProduct);
       globalIndex++;
     } catch (error) {
@@ -179,7 +213,7 @@ const loadAllProducts = (): Product[] => {
   const tshirts = tshirtsProducts as ProductFromJSON[];
   tshirts.forEach(jsonProduct => {
     try {
-      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false, 'tshirts');
       convertedProducts.push(convertedProduct);
       globalIndex++;
     } catch (error) {
@@ -187,7 +221,19 @@ const loadAllProducts = (): Product[] => {
     }
   });
 
-  console.log(`Загружено ${convertedProducts.length} товаров (смешанные + кастомные + худи + футболки)`);
+  // Добавляем верхнюю одежду
+  const outerwear = outerwearProducts as ProductFromJSON[];
+  outerwear.forEach(jsonProduct => {
+    try {
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false, 'outerwear');
+      convertedProducts.push(convertedProduct);
+      globalIndex++;
+    } catch (error) {
+      console.warn('Ошибка при конвертации верхней одежды:', error);
+    }
+  });
+
+  console.log(`Загружено ${convertedProducts.length} товаров (смешанные + кастомные + худи + футболки + верхняя одежда)`);
   return convertedProducts;
 };
 

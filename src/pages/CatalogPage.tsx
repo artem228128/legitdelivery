@@ -61,11 +61,11 @@ const ViewControls = styled.div`
   }
 `;
 
-const ViewButton = styled.button<{ active: boolean }>`
+const ViewButton = styled.button<{ $active: boolean }>`
   padding: 8px 12px;
-  border: 2px solid ${props => props.active ? 'var(--primary-blue)' : 'var(--border-light)'};
-  background: ${props => props.active ? 'var(--primary-blue)' : 'transparent'};
-  color: ${props => props.active ? 'white' : 'var(--text-dark)'};
+  border: 2px solid ${props => props.$active ? 'var(--primary-blue)' : 'var(--border-light)'};
+  background: ${props => props.$active ? 'var(--primary-blue)' : 'transparent'};
+  color: ${props => props.$active ? 'white' : 'var(--text-dark)'};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -649,6 +649,12 @@ const CatalogPage: React.FC = () => {
     
     let filtered = [...products] as (Product | NonNullableProduct)[];
     
+    // Debug: логируем начальное состояние
+    console.log('=== FILTERING DEBUG ===');
+    console.log('Initial products count:', filtered.length);
+    console.log('Current filters:', filters);
+    console.log('Search params:', searchParams.toString());
+    
     // Search filter
     const searchQuery = searchParams.get('search');
     if (searchQuery) {
@@ -658,6 +664,7 @@ const CatalogPage: React.FC = () => {
         product.brand.toLowerCase().includes(query) ||
         product.category.toLowerCase().includes(query)
       );
+      console.log('After search filter:', filtered.length);
     }
     
     // Special filters
@@ -670,11 +677,8 @@ const CatalogPage: React.FC = () => {
       filtered = filtered.filter(product => product.releaseDate && isNewRelease(product.releaseDate));
     }
     
-    // Categories filter - учитываем как URL параметры, так и состояние фильтров
-    const categoryFromUrl = searchParams.get('category');
-    const categoriesToFilter = categoryFromUrl 
-      ? [categoryFromUrl, ...filters.categories]
-      : filters.categories;
+    // Categories filter - используем ТОЛЬКО состояние фильтров, не URL параметры
+    const categoriesToFilter = filters.categories;
     
     // Отделяем специальные категории от обычных
     const specialCategories = categoriesToFilter.filter(cat => 
@@ -684,19 +688,23 @@ const CatalogPage: React.FC = () => {
       cat !== 'New Releases' && cat !== 'Premium'
     );
     
-    // Применяем обычные категории
+    // Применяем обычные категории - ТОЛЬКО если есть активные фильтры
     if (regularCategories.length > 0) {
       filtered = filtered.filter(product => regularCategories.includes(product.category));
+      console.log('After category filter:', filtered.length, 'categories:', regularCategories);
+    } else {
+      console.log('No category filters applied');
     }
     
-    // Brands filter - учитываем как URL параметры, так и состояние фильтров
-    const brandFromUrl = searchParams.get('brand');
-    const brandsToFilter = brandFromUrl 
-      ? [brandFromUrl, ...filters.brands]
-      : filters.brands;
+    // Brands filter - используем ТОЛЬКО состояние фильтров, не URL параметры
+    const brandsToFilter = filters.brands;
     
+    // Применяем фильтр брендов - ТОЛЬКО если есть активные фильтры
     if (brandsToFilter.length > 0) {
       filtered = filtered.filter(product => brandsToFilter.includes(product.brand));
+      console.log('After brand filter:', filtered.length, 'brands:', brandsToFilter);
+    } else {
+      console.log('No brand filters applied');
     }
     
     // Применяем специальные категории после фильтрации по брендам
@@ -714,17 +722,17 @@ const CatalogPage: React.FC = () => {
       });
     }
     
-    // Models filter - учитываем как URL параметры, так и состояние фильтров
-    const modelFromUrl = searchParams.get('model');
-    const modelsToFilter = modelFromUrl 
-      ? [modelFromUrl, ...filters.models]
-      : filters.models;
+    // Models filter - используем ТОЛЬКО состояние фильтров, не URL параметры
+    const modelsToFilter = filters.models;
     
     if (modelsToFilter.length > 0) {
       filtered = filtered.filter(product => {
         if (!product.model) return false;
         return modelsToFilter.includes(product.model);
       }) as NonNullableProduct[];
+      console.log('After model filter:', filtered.length, 'models:', modelsToFilter);
+    } else {
+      console.log('No model filters applied');
     }
     
     // Price range filter
@@ -774,6 +782,8 @@ const CatalogPage: React.FC = () => {
       return sortBy.order === 'desc' ? -comparison : comparison;
     });
     
+    console.log('Final filtered products:', filtered.length);
+    console.log('=== END FILTERING DEBUG ===');
     setIsLoading(false);
     return filtered;
   }, [filters, sortBy, searchParams, favorites, showFavoritesOnly]);
@@ -795,33 +805,52 @@ const CatalogPage: React.FC = () => {
     if (search) params.set('search', search);
     if (filter) params.set('filter', filter);
     
-    // Добавляем активные фильтры
-    newFilters.brands.forEach(brand => params.append('brand', brand));
-    newFilters.categories.forEach(category => params.append('category', category));
-    newFilters.models.forEach(model => params.append('model', model));
+    // Добавляем ТОЛЬКО активные фильтры (не пустые массивы)
+    if (newFilters.brands.length > 0) {
+      newFilters.brands.forEach(brand => params.append('brand', brand));
+    }
+    if (newFilters.categories.length > 0) {
+      newFilters.categories.forEach(category => params.append('category', category));
+    }
+    if (newFilters.models.length > 0) {
+      newFilters.models.forEach(model => params.append('model', model));
+    }
     
-    console.log('Updating URL:', params.toString());
+    console.log('Updating URL with filters:', newFilters);
+    console.log('New URL params:', params.toString());
+    
     setSearchParams(params);
   }, [searchParams, setSearchParams]);
 
   // Инициализация фильтров из URL при загрузке компонента
   useEffect(() => {
-    console.log('Loading filters from URL...');
     const brands = searchParams.getAll('brand');
     const categories = searchParams.getAll('category');
     const models = searchParams.getAll('model');
     const page = searchParams.get('page');
     
-    console.log('URL params:', { brands, categories, models, page });
+    console.log('Initializing filters from URL:', { brands, categories, models });
     
-    setFilters({
-      categories,
-      brands,
-      models,
-      priceRange: [0, 100000],
-      sizes: [],
-      inStock: true
-    });
+    // Если URL пустой, сбрасываем фильтры
+    if (brands.length === 0 && categories.length === 0 && models.length === 0) {
+      setFilters({
+        categories: [],
+        brands: [],
+        models: [],
+        priceRange: [0, 100000],
+        sizes: [],
+        inStock: true
+      });
+    } else {
+      setFilters({
+        categories,
+        brands,
+        models,
+        priceRange: [0, 100000],
+        sizes: [],
+        inStock: true
+      });
+    }
     
     if (page) {
       const pageNumber = parseInt(page, 10);
@@ -851,7 +880,7 @@ const CatalogPage: React.FC = () => {
   }, [currentPage]);
 
   const handleFilterChange = useCallback((key: keyof FilterOptions, value: any) => {
-    console.log('Filter change:', key, value);
+    console.log('handleFilterChange called:', key, value);
     
     setFilters(prev => {
       let newFilters;
@@ -866,6 +895,14 @@ const CatalogPage: React.FC = () => {
         const newArray = array.includes(value) 
           ? array.filter(item => item !== value)
           : [...array, value];
+        // При изменении брендов сбрасываем модели
+        newFilters = { ...prev, [key]: newArray, models: [] };
+      } else if (key === 'categories') {
+        const array = prev[key] as string[];
+        const newArray = array.includes(value) 
+          ? array.filter(item => item !== value)
+          : [...array, value];
+        // При изменении категорий сбрасываем модели
         newFilters = { ...prev, [key]: newArray, models: [] };
       } else if (Array.isArray(prev[key])) {
         const array = prev[key] as string[];
@@ -877,7 +914,7 @@ const CatalogPage: React.FC = () => {
         newFilters = { ...prev, [key]: value };
       }
       
-      console.log('New filters:', newFilters);
+      console.log('New filters state:', newFilters);
       
       // СРАЗУ обновляем URL
       updateUrl(newFilters);
@@ -904,7 +941,6 @@ const CatalogPage: React.FC = () => {
       inStock: true
     };
     
-    console.log('Clearing filters');
     setFilters(newFilters);
     setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
@@ -938,7 +974,7 @@ const CatalogPage: React.FC = () => {
   ];
   // Функция для получения размеров в зависимости от категории
   const getSizesForCategory = (category?: string): string[] => {
-    if (category === 'Худі/світшоти' || category === 'Футболки') {
+    if (category === 'Худі/світшоти' || category === 'Футболки' || category === 'Верхній одяг') {
       return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     }
     // Для кросівок и других категорий (включая Off-White)
@@ -968,7 +1004,7 @@ const CatalogPage: React.FC = () => {
 
   // Функция для проверки наличия активных фильтров
   const hasActiveFilters = () => {
-    return (
+    const hasFilters = (
       filters.categories.length > 0 ||
       filters.brands.length > 0 ||
       filters.models.length > 0 ||
@@ -977,9 +1013,22 @@ const CatalogPage: React.FC = () => {
        (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 100000)) ||
       searchParams.get('search') ||
       searchParams.get('filter') ||
-      searchParams.get('category') ||
       showFavoritesOnly
     );
+    
+    console.log('hasActiveFilters check:', {
+      categories: filters.categories.length,
+      brands: filters.brands.length,
+      models: filters.models.length,
+      sizes: filters.sizes?.length || 0,
+      priceRange: filters.priceRange,
+      search: searchParams.get('search'),
+      filter: searchParams.get('filter'),
+      showFavoritesOnly,
+      result: hasFilters
+    });
+    
+    return hasFilters;
   };
 
   const toggleSection = (key: keyof typeof openSections) => {
@@ -997,10 +1046,10 @@ const CatalogPage: React.FC = () => {
             <Filter size={16} />
             Фільтри
           </FilterButton>
-          <ViewButton active={view === 'grid'} onClick={() => setView('grid')}>
+          <ViewButton $active={view === 'grid'} onClick={() => setView('grid')}>
             <Grid size={16} />
           </ViewButton>
-          <ViewButton active={view === 'list'} onClick={() => setView('list')}>
+          <ViewButton $active={view === 'list'} onClick={() => setView('list')}>
             <List size={16} />
           </ViewButton>
         </ViewControls>
@@ -1268,7 +1317,7 @@ const CatalogPage: React.FC = () => {
                     return (
                       <PageButton
                         key={pageNumber}
-                        active={pageNumber === currentPage}
+                        $active={pageNumber === currentPage}
                         onClick={() => updatePage(pageNumber)}
                       >
                         {pageNumber}
@@ -1328,17 +1377,17 @@ const Pagination = styled.div`
   }
 `;
 
-const PageButton = styled.button<{ active?: boolean }>`
+const PageButton = styled.button<{ $active?: boolean }>`
   min-width: 40px;
   height: 40px;
   padding: 8px 12px;
-  border: 2px solid ${props => props.active ? 'var(--primary-yellow)' : 'var(--border-light)'};
-  background: ${props => props.active ? 'var(--primary-yellow)' : 'white'};
-  color: ${props => props.active ? 'var(--text-dark)' : 'var(--text-dark)'};
+  border: 2px solid ${props => props.$active ? 'var(--primary-yellow)' : 'var(--border-light)'};
+  background: ${props => props.$active ? 'var(--primary-yellow)' : 'white'};
+  color: ${props => props.$active ? 'var(--text-dark)' : 'var(--text-dark)'};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: ${props => props.active ? '600' : '500'};
+  font-weight: ${props => props.$active ? '600' : '500'};
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -1346,7 +1395,7 @@ const PageButton = styled.button<{ active?: boolean }>`
   
   &:hover:not(:disabled) {
     border-color: var(--primary-yellow);
-    background: ${props => props.active ? 'var(--primary-yellow)' : 'rgba(255, 215, 0, 0.1)'};
+    background: ${props => props.$active ? 'var(--primary-yellow)' : 'rgba(255, 215, 0, 0.1)'};
     transform: translateY(-1px);
   }
   
