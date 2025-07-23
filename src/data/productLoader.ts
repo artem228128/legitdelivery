@@ -53,10 +53,20 @@ const generateSizes = (): string[] => {
 // Функция для определения новинки (за последние 2 года)
 const isNewProduct = (releaseDate: string): boolean => {
   if (!releaseDate) return false;
-  const release = new Date(releaseDate);
-  const twoYearsAgo = new Date();
-  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-  return release > twoYearsAgo;
+  
+  try {
+    const release = new Date(releaseDate);
+    if (isNaN(release.getTime())) {
+      console.warn('Invalid release date for isNewProduct:', releaseDate);
+      return false;
+    }
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+    return release > twoYearsAgo;
+  } catch (error) {
+    console.error('Error checking if product is new:', releaseDate, error);
+    return false;
+  }
 };
 
 // Функция для определения хитов (популярные бренды/модели)
@@ -102,7 +112,7 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
     rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // Рейтинг от 3.5 до 5.0
-    releaseDate: jsonProduct.release_date
+    releaseDate: jsonProduct.release_date && jsonProduct.release_date.trim() !== '' ? jsonProduct.release_date : undefined
   };
 };
 
