@@ -889,39 +889,29 @@ const ProductPage: React.FC = () => {
     if (!dateString) return '';
     
     try {
-      // Логируем для отладки
-      console.log('Formatting date:', dateString);
+      // Простая и надежная обработка даты
+      const date = new Date(dateString);
       
-      // Пробуем разные форматы даты для лучшей совместимости
-      let date: Date;
-      
-      // Если дата в формате ISO (YYYY-MM-DD)
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-        date = new Date(dateString + 'T00:00:00');
-      } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
-        // Если дата в формате MM/DD/YYYY
-        const parts = dateString.split('/');
-        date = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
-      } else {
-        date = new Date(dateString);
-      }
-      
-      // Проверяем, что дата валидная
+      // Если дата невалидная, возвращаем исходную строку
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date:', dateString);
         return dateString;
       }
       
-      const formatted = date.toLocaleDateString('uk-UA', {
+      // Используем более простой формат для лучшей совместимости
+      const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-      });
+      };
       
-      console.log('Formatted date:', formatted);
-      return formatted;
+      // Пробуем украинскую локализацию, если не работает - используем английскую
+      try {
+        return date.toLocaleDateString('uk-UA', options);
+      } catch {
+        return date.toLocaleDateString('en-US', options);
+      }
     } catch (error) {
-      console.error('Error formatting date:', dateString, error);
+      // В случае любой ошибки возвращаем исходную строку
       return dateString;
     }
   };
@@ -967,7 +957,7 @@ const ProductPage: React.FC = () => {
           
 
           
-          {product.releaseDate && formatReleaseDate(product.releaseDate) !== product.releaseDate && (
+          {product.releaseDate && (
             <ReleaseDate>
               <Calendar size={16} className="release-icon" />
               <span className="release-text">Дата релізу:</span>
