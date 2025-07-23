@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ArrowLeft, ShoppingCart, Heart, Calendar } from 'lucide-react';
 import { getProductById } from '../data/products';
+import { jsonProducts } from '../data/productLoader';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 
@@ -782,6 +783,138 @@ const NotFound = styled.div`
   }
 `;
 
+const SimilarProductsSection = styled.section`
+  margin-top: 60px;
+  padding: 40px 0;
+  background: var(--bg-light);
+  
+  @media (max-width: 768px) {
+    margin-top: 40px;
+    padding: 30px 0;
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 30px;
+    padding: 20px 0;
+  }
+  
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+  }
+`;
+
+const SimilarProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    padding: 0 15px;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    padding: 0 10px;
+  }
+`;
+
+const SimilarProductCard = styled(Link)`
+  display: block;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const SimilarProductImage = styled.div<{ bgImage: string }>`
+  width: 100%;
+  height: 200px;
+  background-image: url(${props => props.bgImage});
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #f8f9fa;
+  
+  @media (max-width: 768px) {
+    height: 150px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 120px;
+  }
+`;
+
+const SimilarProductInfo = styled.div`
+  padding: 12px;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px;
+  }
+  
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+    
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .brand {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    
+    @media (max-width: 480px) {
+      font-size: 0.75rem;
+    }
+  }
+  
+  .price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+    }
+  }
+`;
+
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -916,6 +1049,11 @@ const ProductPage: React.FC = () => {
     }
   };
 
+  // Получаем похожие продукты (той же модели, но разные цвета/версии)
+  const similarProducts = jsonProducts
+    .filter((p: Product) => p.model === product.model && p.id !== product.id)
+    .slice(0, 4);
+
   return (
     <ProductContainer>
       <BackButton onClick={handleGoBack}>
@@ -1030,6 +1168,23 @@ const ProductPage: React.FC = () => {
           {/* Удалён блок Features */}
         </ProductInfo>
       </ProductLayout>
+      
+      {/* Секция похожих моделей */}
+      <SimilarProductsSection>
+        <h2>Схожі моделі</h2>
+        <SimilarProductsGrid>
+          {similarProducts.map(similarProduct => (
+            <SimilarProductCard key={similarProduct.id} to={`/product/${similarProduct.id}`}>
+              <SimilarProductImage bgImage={similarProduct.image} />
+              <SimilarProductInfo>
+                <h3>{similarProduct.name}</h3>
+                <div className="brand">{similarProduct.brand}</div>
+                <div className="price">₴{similarProduct.price.toLocaleString()}</div>
+              </SimilarProductInfo>
+            </SimilarProductCard>
+          ))}
+        </SimilarProductsGrid>
+      </SimilarProductsSection>
     </ProductContainer>
   );
 };
