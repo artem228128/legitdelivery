@@ -46,17 +46,47 @@ const Header = styled.div`
   }
 `;
 
+const SearchInput = styled.input`
+  width: 250px;
+  padding: 8px 12px;
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-light);
+  }
+  
+  @media (max-width: 768px) {
+    width: 200px;
+    font-size: 16px; // Предотвращает зум на iOS
+  }
+  
+  @media (max-width: 480px) {
+    width: 150px;
+  }
+`;
+
+
+
 const ViewControls = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-wrap: wrap;
   
   @media (max-width: 768px) {
     gap: 10px;
   }
   
   @media (max-width: 480px) {
-    flex-wrap: wrap;
     gap: 8px;
   }
 `;
@@ -524,6 +554,7 @@ const CatalogPage: React.FC = () => {
     const saved = localStorage.getItem('favorites');
     return saved ? JSON.parse(saved) : [];
   });
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [filters, setFilters] = useState<FilterOptions>({
     categories: [],
@@ -655,16 +686,19 @@ const CatalogPage: React.FC = () => {
     console.log('Current filters:', filters);
     console.log('Search params:', searchParams.toString());
     
-    // Search filter
-    const searchQuery = searchParams.get('search');
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    // Search filter - учитываем как URL параметры, так и локальный поиск
+    const searchFromUrl = searchParams.get('search');
+    const searchToUse = searchFromUrl || searchQuery;
+    
+    if (searchToUse) {
+      const query = searchToUse.toLowerCase();
       filtered = filtered.filter(product => 
         product.name.toLowerCase().includes(query) ||
         product.brand.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query)
+        product.category.toLowerCase().includes(query) ||
+        product.model?.toLowerCase().includes(query)
       );
-      console.log('After search filter:', filtered.length);
+      console.log('After search filter:', filtered.length, 'query:', searchToUse);
     }
     
     // Special filters
@@ -828,8 +862,14 @@ const CatalogPage: React.FC = () => {
     const categories = searchParams.getAll('category');
     const models = searchParams.getAll('model');
     const page = searchParams.get('page');
+    const search = searchParams.get('search');
     
-    console.log('Initializing filters from URL:', { brands, categories, models });
+    console.log('Initializing filters from URL:', { brands, categories, models, search });
+    
+    // Инициализируем поиск из URL
+    if (search) {
+      setSearchQuery(search);
+    }
     
     // Если URL пустой, сбрасываем фильтры
     if (brands.length === 0 && categories.length === 0 && models.length === 0) {
@@ -944,10 +984,13 @@ const CatalogPage: React.FC = () => {
     setFilters(newFilters);
     setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
+    setSearchQuery('');
     
     // Полностью очищаем URL от всех параметров
     setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
+  
+
 
   const toggleFavorite = useCallback((productId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -1012,6 +1055,7 @@ const CatalogPage: React.FC = () => {
       (filters.priceRange && filters.priceRange.length === 2 && 
        (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 100000)) ||
       searchParams.get('search') ||
+      searchQuery ||
       searchParams.get('filter') ||
       showFavoritesOnly
     );
@@ -1023,6 +1067,7 @@ const CatalogPage: React.FC = () => {
       sizes: filters.sizes?.length || 0,
       priceRange: filters.priceRange,
       search: searchParams.get('search'),
+      searchQuery,
       filter: searchParams.get('filter'),
       showFavoritesOnly,
       result: hasFilters
@@ -1042,6 +1087,27 @@ const CatalogPage: React.FC = () => {
       <Header>
         <h1>Каталог</h1>
         <ViewControls>
+          <SearchInput
+            type="text"
+            placeholder="Пошук товарів..."
+            value={searchQuery}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchQuery(value);
+              
+              // Поиск в реальном времени
+              if (value.trim()) {
+                const params = new URLSearchParams();
+                params.set('search', value.trim());
+                setSearchParams(params);
+              } else {
+                // Очищаем поиск если поле пустое
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete('search');
+                setSearchParams(params);
+              }
+            }}
+          />
           <FilterButton onClick={() => setIsFilterOpen(true)}>
             <Filter size={16} />
             Фільтри
