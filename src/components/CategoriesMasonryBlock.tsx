@@ -8,7 +8,7 @@ const categories = [
     id: 'featured',
     label: 'NEW RELEASES',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849090/categories_masonry/featured.jpg',
-    link: '/catalog?filter=new',
+    link: '/catalog?filter=new-releases',
     type: 'large'
   },
   // 4 квадратних блоки
@@ -50,9 +50,9 @@ const categories = [
   },
   {
     id: 'brands',
-            label: 'PREMIUM',
+    label: 'PREMIUM',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849089/categories_masonry/brands.png',
-    link: '/catalog?filter=premium',
+    link: '/catalog?category=Premium',
     type: 'horizontal'
   },
   {
