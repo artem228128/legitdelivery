@@ -678,10 +678,10 @@ const CatalogPage: React.FC = () => {
     
     // Отделяем специальные категории от обычных
     const specialCategories = categoriesToFilter.filter(cat => 
-      cat === 'New Releases' || cat === 'Преміум Бренди'
+      cat === 'New Releases' || cat === 'Premium'
     );
     const regularCategories = categoriesToFilter.filter(cat => 
-      cat !== 'New Releases' && cat !== 'Преміум Бренди'
+      cat !== 'New Releases' && cat !== 'Premium'
     );
     
     // Применяем обычные категории
@@ -706,7 +706,7 @@ const CatalogPage: React.FC = () => {
           if (category === 'New Releases') {
             return product.releaseDate && isNewRelease(product.releaseDate);
           }
-          if (category === 'Преміум Бренди') {
+          if (category === 'Premium') {
             return product.price > 17000;
           }
           return false;
@@ -934,7 +934,7 @@ const CatalogPage: React.FC = () => {
     'Верхній одяг',
     'Худі/світшоти',
     'New Releases',
-    'Преміум Бренди'
+    'Premium'
   ];
   const sizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
 

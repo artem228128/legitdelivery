@@ -50,7 +50,7 @@ const categories = [
   },
   {
     id: 'brands',
-    label: 'ПРЕМІУМ БРЕНДИ',
+            label: 'PREMIUM',
     image: 'https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849089/categories_masonry/brands.png',
     link: '/catalog?filter=premium',
     type: 'horizontal'
