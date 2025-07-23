@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Filter, Grid, List, X, ChevronDown, ChevronUp, Heart } from 'lucide-react';
 import { products, brands, models } from '../data/products';
 import { Product, FilterOptions, SortOptions } from '../types';
-import { Link } from 'react-router-dom';
 
 const CatalogContainer = styled.div`
   max-width: 1200px;
@@ -478,6 +477,17 @@ const ProductInfo = styled.div<{ view: 'grid' | 'list' }>`
     font-size: 0.9rem;
     display: ${props => props.view === 'list' ? 'block' : 'none'};
   }
+  
+  .release-date {
+    color: var(--primary-yellow);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    
+    @media (max-width: 480px) {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 const NoResults = styled.div`
@@ -592,9 +602,14 @@ const CatalogPage: React.FC = () => {
       filtered = filtered.filter(product => product.isHit);
     }
     
-    // Categories filter
-    if (filters.categories.length > 0) {
-      filtered = filtered.filter(product => filters.categories.includes(product.category));
+    // Categories filter - учитываем как URL параметры, так и состояние фильтров
+    const categoryFromUrl = searchParams.get('category');
+    const categoriesToFilter = categoryFromUrl 
+      ? [categoryFromUrl, ...filters.categories]
+      : filters.categories;
+    
+    if (categoriesToFilter.length > 0) {
+      filtered = filtered.filter(product => categoriesToFilter.includes(product.category));
     }
     
     // Brands filter
@@ -646,9 +661,7 @@ const CatalogPage: React.FC = () => {
         case 'name':
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'rating':
-          comparison = (a.rating || 0) - (b.rating || 0);
-          break;
+
         case 'newest':
           comparison = (a.isNew ? 1 : 0) - (b.isNew ? 1 : 0);
           break;
@@ -712,7 +725,7 @@ const CatalogPage: React.FC = () => {
       const pageNumber = parseInt(page, 10);
       if (pageNumber > 0) setCurrentPage(pageNumber);
     }
-  }, []); // Только при первой загрузке
+  }, [searchParams]); // При изменении параметров URL
 
   // Сброс страницы при изменении фильтров
   const prevFiltersRef = useRef(filters);
@@ -794,9 +807,9 @@ const CatalogPage: React.FC = () => {
     setPriceInputs({ min: '', max: '' });
     setShowFavoritesOnly(false);
     
-    // СРАЗУ обновляем URL
-    updateUrl(newFilters);
-  }, [updateUrl]);
+    // Полностью очищаем URL от всех параметров
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
 
   const toggleFavorite = useCallback((productId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -810,7 +823,15 @@ const CatalogPage: React.FC = () => {
     });
   }, []);
 
-  const categories = ['Кросівки', 'Одяг', 'Аксесуари'];
+  // Категории из главной страницы
+  const categories = [
+    'Кросівки',
+    'Сумки', 
+    'Футболки',
+    'Аксесуари',
+    'Верхній одяг',
+    'Худі/світшоти'
+  ];
   const sizes = ['36', '36.5', '37.5', '38', '38.5', '39', '40', '40.5', '41', '42', '42.5', '43', '44', '44.5', '45', '46', '46.5', '47', '47.5'];
 
   const [openSections, setOpenSections] = useState({
@@ -833,6 +854,7 @@ const CatalogPage: React.FC = () => {
        (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 100000)) ||
       searchParams.get('search') ||
       searchParams.get('filter') ||
+      searchParams.get('category') ||
       showFavoritesOnly
     );
   };
@@ -840,6 +862,8 @@ const CatalogPage: React.FC = () => {
   const toggleSection = (key: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
   };
+
+
 
   return (
     <CatalogContainer>
@@ -993,6 +1017,9 @@ const CatalogPage: React.FC = () => {
                     </SizeOption>
                   ))}
                 </SizeGrid>
+                <SizeGuideLink to="/size-guide">
+                  Не знаєте свій розмір?
+                </SizeGuideLink>
               </Collapsible>
             </FilterSection>
             
@@ -1055,7 +1082,6 @@ const CatalogPage: React.FC = () => {
               <option value="newest-desc">Спочатку нові</option>
               <option value="price-asc">Від дешевих до дорогих</option>
               <option value="price-desc">Від дорогих до дешевих</option>
-              <option value="rating-desc">За рейтингом</option>
               <option value="name-asc">За назвою А-Я</option>
               <option value="name-desc">За назвою Я-А</option>
             </select>
@@ -1286,6 +1312,20 @@ const SizeOption = styled(FilterOption)`
   input[type="checkbox"]:checked ~ & {
     border-color: var(--primary-yellow);
     background: rgba(255, 215, 0, 0.1);
+  }
+`;
+
+const SizeGuideLink = styled(Link)`
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    color: #4169E1;
+    text-decoration: underline;
   }
 `;
 

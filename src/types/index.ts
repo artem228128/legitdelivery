@@ -16,6 +16,7 @@ export interface Product {
   isHit?: boolean;
   rating?: number;
   reviews?: Review[];
+  releaseDate?: string;
 }
 
 // Новый интерфейс для данных из JSON файлов
@@ -70,7 +71,7 @@ export interface FilterOptions {
 }
 
 export interface SortOptions {
-  sortBy: 'price' | 'name' | 'newest' | 'rating';
+  sortBy: 'price' | 'name' | 'newest';
   order: 'asc' | 'desc';
 }
 

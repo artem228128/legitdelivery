@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ArrowLeft, Star, ShoppingCart, Heart } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Heart, Calendar } from 'lucide-react';
 import { getProductById } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
@@ -385,6 +385,55 @@ const Rating = styled.div`
   }
 `;
 
+const ReleaseDate = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  
+  @media (max-width: 768px) {
+    margin-bottom: 15px;
+    padding: 6px 10px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 12px;
+    padding: 5px 8px;
+  }
+  
+  .release-icon {
+    color: var(--primary-yellow);
+    font-size: 1.1rem;
+    
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+  }
+  
+  .release-text {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .release-date {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
+  }
+`;
+
 const OptionsSection = styled.div`
   margin-bottom: 30px;
   
@@ -532,6 +581,46 @@ const ColorButton = styled.button<{ color: string; active: boolean }>`
   
   &:hover {
     border-color: var(--primary-blue);
+  }
+`;
+
+const SizeHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  
+  h3 {
+    margin: 0;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 10px;
+  }
+`;
+
+const SizeGuideLink = styled(Link)`
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
+  
+  &:hover {
+    color: #4169E1;
+    text-decoration: underline;
   }
 `;
 
@@ -795,6 +884,22 @@ const ProductPage: React.FC = () => {
   const discount = product.originalPrice ? 
     Math.round((1 - product.price / product.originalPrice) * 100) : 0;
 
+  // Функция для форматирования даты релиза
+  const formatReleaseDate = (dateString: string): string => {
+    if (!dateString) return '';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('uk-UA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  };
+
   return (
     <ProductContainer>
       <BackButton onClick={handleGoBack}>
@@ -834,24 +939,23 @@ const ProductPage: React.FC = () => {
             )}
           </PriceSection>
           
-          {product.rating && (
-            <Rating>
-              <div className="stars">
-                {[...Array(5)].map((_, index) => (
-                  <Star
-                    key={index}
-                    size={20}
-                    fill={index < Math.floor(product.rating!) ? '#FFD700' : 'none'}
-                    color="#FFD700"
-                  />
-                ))}
-              </div>
-              <span className="rating-text">{product.rating} з 5</span>
-            </Rating>
+
+          
+          {product.releaseDate && (
+            <ReleaseDate>
+              <Calendar size={16} className="release-icon" />
+              <span className="release-text">Дата релізу:</span>
+              <span className="release-date">{formatReleaseDate(product.releaseDate)}</span>
+            </ReleaseDate>
           )}
           
           <OptionsSection>
-            <h3>Розмір</h3>
+            <SizeHeader>
+              <h3>Розмір</h3>
+              <SizeGuideLink to="/size-guide">
+                Не знаєте свій розмір?
+              </SizeGuideLink>
+            </SizeHeader>
             <SizeOptions>
               {allSizes.map(size => (
                 <SizeButton

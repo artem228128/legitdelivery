@@ -1,4 +1,5 @@
 import { Product, ProductFromJSON } from '../types';
+import { getModelDescription } from './modelDescriptions';
 
 // Используем готовый смешанный файл вместо отдельных файлов
 import allProductsMixed from '../products_jsons/all_products_mixed.json';
@@ -95,12 +96,13 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     category: getCategory(jsonProduct.model, jsonProduct.brand),
     brand: jsonProduct.brand,
     model: jsonProduct.model,
-    description: jsonProduct.description || `${jsonProduct.brand} ${jsonProduct.model}. Оригинальная модель с высоким качеством материалов и современным дизайном.`,
+    description: jsonProduct.description || getModelDescription(jsonProduct.model),
     sizes: generateSizes(),
     inStock: Math.random() > 0.1, // 90% товаров в наличии
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
     rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // Рейтинг от 3.5 до 5.0
+    releaseDate: jsonProduct.release_date
   };
 };
 
