@@ -265,7 +265,7 @@ const initialCollections = [
     id: 'nike-dunk-low',
     title: 'NIKE DUNK LOW',
     image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849108/collections/nike-dunk-low.png"',
-    link: '/catalog?filter=dunk'
+    link: '/catalog?model=Nike Dunk Low'
   },
   {
     id: 'new-balance',
@@ -329,12 +329,6 @@ const hiddenCollections = [
     title: 'SALOMON',
     image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849110/collections/salomon.jpg"',
     link: '/catalog?brand=Salomon'
-  },
-  {
-    id: 'adidas-yeezy',
-    title: 'ADIDAS YEEZY',
-    image: '"https://res.cloudinary.com/dvy87ylmu/image/upload/v1752849096/collections/adidas-yeezy.jpg"',
-    link: '/catalog?brand=Adidas&model=Yeezy'
   }
 ];
 

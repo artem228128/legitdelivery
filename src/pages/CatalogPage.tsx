@@ -612,16 +612,26 @@ const CatalogPage: React.FC = () => {
       filtered = filtered.filter(product => categoriesToFilter.includes(product.category));
     }
     
-    // Brands filter
-    if (filters.brands.length > 0) {
-      filtered = filtered.filter(product => filters.brands.includes(product.brand));
+    // Brands filter - учитываем как URL параметры, так и состояние фильтров
+    const brandFromUrl = searchParams.get('brand');
+    const brandsToFilter = brandFromUrl 
+      ? [brandFromUrl, ...filters.brands]
+      : filters.brands;
+    
+    if (brandsToFilter.length > 0) {
+      filtered = filtered.filter(product => brandsToFilter.includes(product.brand));
     }
     
-    // Models filter
-    if (filters.models.length > 0) {
+    // Models filter - учитываем как URL параметры, так и состояние фильтров
+    const modelFromUrl = searchParams.get('model');
+    const modelsToFilter = modelFromUrl 
+      ? [modelFromUrl, ...filters.models]
+      : filters.models;
+    
+    if (modelsToFilter.length > 0) {
       filtered = filtered.filter(product => {
         if (!product.model) return false;
-        return filters.models.includes(product.model);
+        return modelsToFilter.includes(product.model);
       }) as NonNullableProduct[];
     }
     
