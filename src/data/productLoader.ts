@@ -5,6 +5,7 @@ import { getModelDescription } from './modelDescriptions';
 import allProductsMixed from '../products_jsons/all_products_mixed.json';
 import customSneakersProducts from '../products_jsons/custom_sneakers.json';
 import hoodiesProducts from '../products_jsons/hoodies.json';
+import tshirtsProducts from '../products_jsons/tshirts.json';
 
 // Функция для преобразования цены из строки в число (в гривнах)
 const parsePrice = (priceStr: string): number => {
@@ -22,6 +23,11 @@ const getCategory = (model: string, brand: string, type?: string): string => {
   // Проверяем тип товара для худи
   if (typeLower.includes('hoodie') || typeLower.includes('sweatshirt')) {
     return 'Худі/світшоти';
+  }
+  
+  // Проверяем тип товара для футболок
+  if (typeLower.includes('t-shirt') || typeLower.includes('tshirt') || typeLower.includes('shirt')) {
+    return 'Футболки';
   }
   
   if (modelLower.includes('jordan') || modelLower.includes('aj')) {
@@ -54,7 +60,7 @@ const getCategory = (model: string, brand: string, type?: string): string => {
 
 // Функция для генерации размеров
 const generateSizes = (category?: string): string[] => {
-  if (category === 'Худі/світшоти') {
+  if (category === 'Худі/світшоти' || category === 'Футболки') {
     return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   }
   return ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
@@ -115,7 +121,9 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     brand: jsonProduct.brand,
     model: jsonProduct.model,
     description: jsonProduct.description || getModelDescription(jsonProduct.model),
-    sizes: generateSizes(getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type)),
+    sizes: (jsonProduct as any).available_sizes?.length > 0 
+      ? (jsonProduct as any).available_sizes 
+      : generateSizes(getCategory(jsonProduct.model, jsonProduct.brand, jsonProduct.type)),
     inStock: Math.random() > 0.1, // 90% товаров в наличии
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
@@ -167,7 +175,19 @@ const loadAllProducts = (): Product[] => {
     }
   });
 
-  console.log(`Загружено ${convertedProducts.length} товаров (смешанные + кастомные + худи)`);
+  // Добавляем футболки
+  const tshirts = tshirtsProducts as ProductFromJSON[];
+  tshirts.forEach(jsonProduct => {
+    try {
+      const convertedProduct = convertToProduct(jsonProduct, globalIndex, false);
+      convertedProducts.push(convertedProduct);
+      globalIndex++;
+    } catch (error) {
+      console.warn('Ошибка при конвертации футболок:', error);
+    }
+  });
+
+  console.log(`Загружено ${convertedProducts.length} товаров (смешанные + кастомные + худи + футболки)`);
   return convertedProducts;
 };
 

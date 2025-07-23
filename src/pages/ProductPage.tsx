@@ -930,7 +930,7 @@ const ProductPage: React.FC = () => {
   // Все возможные размеры обуви
   // Функция для получения размеров в зависимости от категории
   const getSizesForCategory = (category?: string): string[] => {
-    if (category === 'Худі/світшоти') {
+    if (category === 'Худі/світшоти' || category === 'Футболки') {
       return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     }
     // Для кросівок и других категорий (включая Off-White)
