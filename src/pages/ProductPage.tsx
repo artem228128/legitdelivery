@@ -693,23 +693,23 @@ const AddToCartButton = styled.button`
     }
     
     @media (max-width: 768px) {
-      width: 10px;
-      height: 10px;
+      width: 14px;
+      height: 14px;
     }
     
     @media (max-width: 600px) {
-      width: 9px;
-      height: 9px;
+      width: 16px;
+      height: 16px;
     }
     
     @media (max-width: 480px) {
-      width: 8px;
-      height: 8px;
+      width: 18px;
+      height: 18px;
     }
     
     @media (max-width: 400px) {
-      width: 7px;
-      height: 7px;
+      width: 20px;
+      height: 20px;
     }
   }
 `;
@@ -957,11 +957,11 @@ const ProductPage: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    const updateIconSize = () => {
-      if (window.innerWidth <= 480) setIconSize(20); // Увеличено с 18 до 20
-      else if (window.innerWidth <= 768) setIconSize(20);
-      else setIconSize(22);
-    };
+      const updateIconSize = () => {
+    if (window.innerWidth <= 480) setIconSize(18); // Еще немного уменьшено
+    else if (window.innerWidth <= 768) setIconSize(18);
+    else setIconSize(22);
+  };
     updateIconSize();
     window.addEventListener('resize', updateIconSize);
     return () => window.removeEventListener('resize', updateIconSize);
