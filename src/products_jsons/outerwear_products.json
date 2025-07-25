@@ -581,28 +581,6 @@
     "type": "Windbreaker"
   },
   {
-    "url": "https://www.goat.com/apparel/thisisneverthat-corduroy-field-jacket-black-tn243wowls01-blac",
-    "title": "thisisneverthat Corduroy Field Jacket 'Black'",
-    "brand": "thisisneverthat",
-    "model": "Outerwear",
-    "price": "$0",
-    "images": [
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/107/549/688/original/1563873_01.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/107/549/687/original/1563873_02.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/550/032/original/1563976_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/549/680/original/1563874_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/550/007/original/1563970_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/549/848/original/1563923_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/549/678/original/1563873_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/549/889/original/1563938_00.png.png?width=750"
-    ],
-    "description": "",
-    "sku": "TN243WOWLS01",
-    "release_date": "",
-    "available_sizes": [],
-    "type": "Jacket"
-  },
-  {
     "url": "https://www.goat.com/apparel/palm-angels-classic-track-jacket-blue-pmbd001c99fab0044601",
     "title": "Palm Angels Classic Track Jacket 'Blue'",
     "brand": "Palm Angels",
@@ -1142,7 +1120,7 @@
     "title": "Stussy 8 Ball Zip Hood 'Smoke'",
     "brand": "Stussy",
     "model": "Outerwear",
-    "price": "$0",
+    "price": "$140",
     "images": [
       "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/549/060/original/905977_01.jpg.jpeg?action=crop&width=750",
       "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/549/061/original/905977_02.jpg.jpeg?action=crop&width=750",
@@ -2120,28 +2098,6 @@
       "XL",
       "XXL"
     ],
-    "type": "Jacket"
-  },
-  {
-    "url": "https://www.goat.com/apparel/louis-vuitton-x-supreme-jacquard-denim-trucker-jacket-blue-1a3f9j",
-    "title": "Louis Vuitton x Supreme Jacquard Denim Trucker Jacket 'Blue'",
-    "brand": "Louis Vuitton",
-    "model": "Outerwear",
-    "price": "$8000",
-    "images": [
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/105/515/354/original/1518096_01.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/105/515/370/original/1518096_02.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/107/477/897/original/993735_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/105/517/444/original/1488192_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/098/993/065/original/1267134_00.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/096/536/417/original/1AARR8.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/095/618/946/original/1ABMHV.png.png?width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_pictures/images/103/388/860/original/1360318_00.png.png?width=750"
-    ],
-    "description": "",
-    "sku": "1A3F9JColorwayBlueMain",
-    "release_date": "",
-    "available_sizes": [],
     "type": "Jacket"
   },
   {

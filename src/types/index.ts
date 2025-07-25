@@ -14,6 +14,7 @@ export interface Product {
   inStock: boolean;
   isNew?: boolean;
   isHit?: boolean;
+  isPopular?: boolean;
   rating?: number;
   reviews?: Review[];
   releaseDate?: string;
@@ -32,6 +33,7 @@ export interface ProductFromJSON {
   sku: string;
   release_date: string;
   type: string;
+  isPopular?: boolean;
 }
 
 export interface Review {

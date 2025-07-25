@@ -161,6 +161,7 @@ const convertToProduct = (jsonProduct: ProductFromJSON, index: number, isCustom:
     inStock: Math.random() > 0.1, // 90% товаров в наличии
     isNew: isNewProduct(jsonProduct.release_date),
     isHit: isHitProduct(jsonProduct.title, jsonProduct.brand),
+    isPopular: jsonProduct.isPopular || false,
     rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // Рейтинг от 3.5 до 5.0
     releaseDate: jsonProduct.release_date || undefined
   };

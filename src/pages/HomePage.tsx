@@ -1548,7 +1548,7 @@ const HomePage: React.FC = () => {
 
   // Get popular products from custom sneakers (first 8 products)
   const customSneakers = products.filter(product => 
-    product.id.includes('custom_') || product.id.includes('CUSTOM')
+    product.isPopular === true
   );
   
   console.log('Всего товаров:', products.length);
