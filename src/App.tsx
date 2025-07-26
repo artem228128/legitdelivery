@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
+import { Analytics } from "@vercel/analytics/react";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -111,6 +112,7 @@ function App() {
           </MainContent>
           <Footer />
         </AppContainer>
+        <Analytics />
       </Router>
     </CartProvider>
   );
