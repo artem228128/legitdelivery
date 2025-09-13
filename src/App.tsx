@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Analytics } from "@vercel/analytics/react";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -21,6 +20,11 @@ import AdminPage from './pages/AdminPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { CartProvider } from './context/CartContext';
+
+// Условный импорт Analytics только для production
+const Analytics = process.env.NODE_ENV === 'production' 
+  ? require("@vercel/analytics/react").Analytics 
+  : () => null;
 
 const GlobalStyle = createGlobalStyle`
   * {
