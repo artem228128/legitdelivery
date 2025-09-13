@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
       return;
     }
 
-    const TELEGRAM_BOT_TOKEN = '8000270765:AAG93gqHnrPwnQgkC0xVd3FCSvylftogxZM';
+    const TELEGRAM_BOT_TOKEN = '8000270765:AAFe0Oq0uuFwqpBVhYZOsn_pltffYdbrxr0';
     const CHAT_ID = '-1002375665181';
     
     // Формируем сообщение
