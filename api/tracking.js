@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const fetch = require('node-fetch');
 
 // Путь к файлу с данными
 const DATA_FILE = '/tmp/tracking-data.json';
@@ -31,6 +32,61 @@ function setCorsHeaders(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+// Функция отправки заказа в Telegram
+async function sendOrderToTelegram(orderData) {
+  const TELEGRAM_BOT_TOKEN = '8000270765:AAG93gqHnrPwnQgkC0xVd3FCSvylftogxZM';
+  const CHAT_ID = '-1002375665181';
+  
+  // Формируем сообщение
+  let message = `🆕 НОВИЙ ЗАМОВЛЕННЯ\n\n`;
+  message += `👤 Ім'я: ${orderData.name}\n`;
+  message += `📱 Телефон: ${orderData.phone}\n`;
+  message += `📷 Instagram: ${orderData.instagram}\n`;
+  
+  if (orderData.comment) {
+    message += `💬 Коментар: ${orderData.comment}\n`;
+  }
+  
+  message += `\n📦 ТОВАРИ:\n`;
+  
+  orderData.items.forEach((item, index) => {
+    message += `${index + 1}. ${item.name}\n`;
+    message += `   Розмір: ${item.size}\n`;
+    message += `   Кількість: ${item.quantity}\n`;
+    message += `   Ціна: ${item.price} ₴\n\n`;
+  });
+  
+  message += `💰 ЗАГАЛЬНА СУМА: ${orderData.total} ₴`;
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+      }),
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      console.error('Telegram API error:', result);
+      return false;
+    }
+
+    console.log('✅ Заказ успешно отправлен в Telegram:', result);
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Ошибка при отправке в Telegram:', error);
+    return false;
+  }
 }
 
 module.exports = async (req, res) => {
@@ -78,7 +134,42 @@ module.exports = async (req, res) => {
         });
         
       case 'POST':
-        // Добавить новую посылку
+        // Проверяем, это отправка заказа в Telegram или добавление трек-номера
+        if (req.body.action === 'send-telegram-order') {
+          try {
+            const orderData = req.body.orderData;
+            
+            if (!orderData) {
+              return res.status(400).json({ 
+                success: false, 
+                error: 'Order data is required' 
+              });
+            }
+            
+            const telegramSuccess = await sendOrderToTelegram(orderData);
+            
+            if (telegramSuccess) {
+              return res.status(200).json({ 
+                success: true, 
+                message: 'Order sent to Telegram successfully'
+              });
+            } else {
+              return res.status(500).json({ 
+                success: false, 
+                error: 'Failed to send to Telegram'
+              });
+            }
+          } catch (error) {
+            console.error('Error sending order to Telegram:', error);
+            return res.status(500).json({ 
+              success: false, 
+              error: 'Internal server error',
+              details: error.message 
+            });
+          }
+        }
+        
+        // Добавить новую посылку (существующая логика)
         const newItem = {
           id: Date.now().toString(),
           trackingId: req.body.trackingId,

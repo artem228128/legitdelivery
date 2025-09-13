@@ -14,13 +14,14 @@ interface OrderData {
 
 export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean> => {
   try {
-    // Используем наш API route вместо прямого обращения к Telegram API
-    const response = await fetch('/api/send-telegram-order', {
+    // Используем существующий tracking API с параметром action
+    const response = await fetch('/api/tracking', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        action: 'send-telegram-order',
         orderData: orderData
       }),
     });
