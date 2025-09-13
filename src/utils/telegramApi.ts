@@ -149,7 +149,7 @@ ${orderData.items?.map((item, i) => `${i+1}. ${item.name} (размер: ${item.
     console.log('📦 Отправляю заказ через API:', orderData);
 
     // Пробуем основной API endpoint
-    const response = await fetch('/api/tracking', {
+    const response = await fetch('/tracking', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
