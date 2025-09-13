@@ -44,39 +44,48 @@ export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean
       // Отправляем через публичный webhook сервис
       const webhookUrl = 'https://webhook.site/unique/telegram-forwarder';
       
-      // Простой подход: используем GET запрос через image pixel
+      // Упрощенный подход: короткое сообщение через image pixel
+      const shortMessage = `🆕 ЗАКАЗ\nИмя: ${orderData.name}\nТелефон: ${orderData.phone}\nСумма: ${orderData.total} ₴`;
+      
       const params = new URLSearchParams({
         chat_id: '-1002375665181',
-        text: message
+        text: shortMessage
       });
+
+      console.log('📤 Отправляю упрощенное сообщение:', shortMessage);
 
       // Создаем невидимое изображение для GET запроса (обходит CORS)
       const img = new Image();
       img.style.display = 'none';
       
       img.onload = () => {
-        console.log('✅ Telegram запрос выполнен (через image pixel)');
-        document.body.removeChild(img);
-      };
-      
-      img.onerror = () => {
-        console.log('ℹ️ Image pixel метод выполнен (ошибки игнорируются)');
+        console.log('✅ Telegram запрос успешно выполнен!');
         if (img.parentNode) {
           document.body.removeChild(img);
         }
       };
       
-      img.src = `https://api.telegram.org/bot8000270765:AAFe0Oq0uuFwqpBVhYZOsn_pltffYdbrxr0/sendMessage?${params.toString()}`;
+      img.onerror = () => {
+        console.log('❌ Image pixel запрос failed, но это может быть нормально');
+        if (img.parentNode) {
+          document.body.removeChild(img);
+        }
+      };
+      
+      const telegramUrl = `https://api.telegram.org/bot8000270765:AAFe0Oq0uuFwqpBVhYZOsn_pltffYdbrxr0/sendMessage?${params.toString()}`;
+      console.log('🔗 URL для отправки:', telegramUrl);
+      
+      img.src = telegramUrl;
       document.body.appendChild(img);
       
-      // Удаляем через 10 секунд на всякий случай
+      // Удаляем через 5 секунд
       setTimeout(() => {
         if (img.parentNode) {
           document.body.removeChild(img);
         }
-      }, 10000);
+      }, 5000);
 
-      console.log('✅ Заказ отправлен через image pixel trick!');
+      console.log('✅ Заказ отправлен через упрощенный image pixel!');
       return true;
 
     } catch (error) {
