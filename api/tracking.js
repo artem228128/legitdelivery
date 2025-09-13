@@ -137,14 +137,17 @@ module.exports = async (req, res) => {
         // Проверяем, это отправка заказа в Telegram или добавление трек-номера
         if (req.body.action === 'send-telegram-order') {
           try {
-            const orderData = req.body.orderData;
+            // Извлекаем данные заказа (убираем action)
+            const { action, ...orderData } = req.body;
             
-            if (!orderData) {
+            if (!orderData.name || !orderData.phone) {
               return res.status(400).json({ 
                 success: false, 
                 error: 'Order data is required' 
               });
             }
+            
+            console.log('📦 Получен заказ для отправки в Telegram:', orderData);
             
             const telegramSuccess = await sendOrderToTelegram(orderData);
             
