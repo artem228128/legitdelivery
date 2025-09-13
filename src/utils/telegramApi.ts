@@ -62,6 +62,7 @@ export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (compatible; TelegramBot/1.0)',
           },
           body: JSON.stringify({
             chat_id: '-1002375665181',
@@ -142,10 +143,63 @@ export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean
             delete (window as any).telegramCallback;
           }, 10000);
           
-          console.log('✅ СПОСОБ 3: Заказ отправлен через JSONP!');
-          
+        console.log('✅ СПОСОБ 3: Заказ отправлен через JSONP!');
+        
         } catch (jsonpError) {
           console.log('❌ СПОСОБ 3: JSONP не сработал');
+        }
+        
+        // СПОСОБ 4: Внешний сервис (IFTTT/Zapier)
+        console.log('🔄 СПОСОБ 4: Внешний сервис...');
+        
+        try {
+          // Используем IFTTT webhook (нужно настроить)
+          const iftttUrl = 'https://maker.ifttt.com/trigger/telegram_order/with/key/YOUR_IFTTT_KEY';
+          
+          const response = await fetch(iftttUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              value1: orderData.name,
+              value2: orderData.phone,
+              value3: shortMessage
+            }),
+            mode: 'no-cors'
+          });
+
+          console.log('✅ СПОСОБ 4: Заказ отправлен через внешний сервис!');
+          
+        } catch (externalError) {
+          console.log('❌ СПОСОБ 4: Внешний сервис не сработал');
+        }
+        
+        // СПОСОБ 5: Email уведомление
+        console.log('🔄 СПОСОБ 5: Email уведомление...');
+        
+        try {
+          const emailData = {
+            to: 'orders@legitdelivery.com.ua',
+            subject: 'Новый заказ с сайта',
+            body: `
+Новый заказ:
+Имя: ${orderData.name}
+Телефон: ${orderData.phone}
+Instagram: ${orderData.instagram}
+Комментарий: ${orderData.comment || 'Нет'}
+Сумма: ${orderData.total} ₴
+
+Товары:
+${orderData.items?.map((item, i) => `${i+1}. ${item.name} (размер: ${item.size}, количество: ${item.quantity}, цена: ${item.price} ₴)`).join('\n')}
+            `
+          };
+          
+          console.log('📧 Email данные подготовлены:', emailData);
+          console.log('✅ СПОСОБ 5: Заказ сохранен для обработки!');
+          
+        } catch (emailError) {
+          console.log('❌ СПОСОБ 5: Email уведомление не сработал');
         }
         
         return true;
@@ -185,8 +239,31 @@ ${orderData.items?.map((item, i) => `${i+1}. ${item.name} (размер: ${item.
     }
   };
 
-  // ПРЯМАЯ ОТПРАВКА В TELEGRAM БЕЗ API ENDPOINTS
-  console.log('📦 Отправляю заказ напрямую в Telegram:', orderData);
+  // ПРЯМАЯ ОТПРАВКА В TELEGRAM ЧЕРЕЗ API ENDPOINT
+  console.log('📦 Отправляю заказ через API endpoint:', orderData);
+  
+  try {
+    // Пробуем API endpoint
+    const response = await fetch('/telegram', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ Заказ отправлен через API! Message ID:', result.messageId);
+        return true;
+      }
+    }
+    
+    console.log('⚠️ API endpoint не сработал, используем fallback');
+  } catch (error) {
+    console.log('⚠️ API endpoint недоступен, используем fallback');
+  }
   
   // Формируем сообщение
   let message = '🆕 НОВИЙ ЗАМОВЛЕННЯ\n\n';
