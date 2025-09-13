@@ -70,8 +70,8 @@ export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean
           mode: 'no-cors'
         });
 
-        console.log('✅ СПОСОБ 1: Заказ отправлен через fetch!');
-        return true;
+        console.log('❌ СПОСОБ 1: Fetch заблокирован (401 Unauthorized)');
+        throw new Error('Fetch blocked by CORS');
 
       } catch (fetchError) {
         console.log('❌ СПОСОБ 1 не сработал, пробую СПОСОБ 2...');
