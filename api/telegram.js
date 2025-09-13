@@ -1,4 +1,3 @@
-// Простой API для отправки заказов в Telegram - работает как тестовый скрипт
 const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
@@ -27,7 +26,7 @@ module.exports = async (req, res) => {
     const TELEGRAM_BOT_TOKEN = '8000270765:AAFe0Oq0uuFwqpBVhYZOsn_pltffYdbrxr0';
     const CHAT_ID = '-1002375665181';
     
-    // Простое формирование сообщения
+    // Формирование сообщения
     let message = '🆕 НОВИЙ ЗАМОВЛЕННЯ\n\n';
     message += `👤 Ім'я: ${orderData.name || 'Не вказано'}\n`;
     message += `📱 Телефон: ${orderData.phone || 'Не вказано'}\n`;

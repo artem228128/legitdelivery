@@ -149,15 +149,12 @@ ${orderData.items?.map((item, i) => `${i+1}. ${item.name} (размер: ${item.
     console.log('📦 Отправляю заказ через API:', orderData);
 
     // Пробуем основной API endpoint
-    const response = await fetch('/tracking', {
+    const response = await fetch('/api/telegram', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...orderData,
-        action: 'send-telegram-order'
-      }),
+      body: JSON.stringify(orderData),
     });
 
     // Если API недоступен - используем fallback
