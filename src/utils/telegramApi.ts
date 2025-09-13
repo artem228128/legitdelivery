@@ -70,8 +70,9 @@ export const sendOrderToTelegram = async (orderData: OrderData): Promise<boolean
           mode: 'no-cors'
         });
 
-        console.log('✅ Заказ отправлен напрямую через fetch (no-cors)!');
-        return true;
+        console.log('⚠️ Заказ отправлен через fetch (no-cors), но статус неизвестен');
+        console.log('❌ Telegram API блокирует браузерные запросы (401 Unauthorized)');
+        return false;
 
       } catch (fetchError) {
         console.log('❌ Fetch не сработал, пробую image pixel...');
