@@ -64,7 +64,7 @@ const WarrantyPage: React.FC = () => (
     </Section>
 
     <Section>
-      <SectionTitle><RefreshCcw size={22}/> Товар під замовлення з-за кордону</SectionTitle>
+      <SectionTitle><RefreshCcw size={22}/> Товар під замовлення з-за кордону:</SectionTitle>
       <Paragraph>
         Обмін чи повернення товарів, замовлених із-за кордону, можливе лише у таких випадках:
       </Paragraph>
