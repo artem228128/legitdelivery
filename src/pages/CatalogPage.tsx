@@ -365,7 +365,9 @@ const ProductCard = styled(Link)<{ view: 'grid' | 'list' }>`
   transition: all 0.3s ease;
   text-decoration: none;
   color: inherit;
-  display: ${props => props.view === 'list' ? 'flex' : 'block'};
+  display: ${props => props.view === 'list' ? 'flex' : 'flex'};
+  flex-direction: ${props => props.view === 'list' ? 'row' : 'column'};
+  height: ${props => props.view === 'grid' ? '100%' : 'auto'};
   
   &:hover {
     transform: translateY(-5px);
@@ -374,7 +376,8 @@ const ProductCard = styled(Link)<{ view: 'grid' | 'list' }>`
   
   @media (max-width: 768px) {
     border-radius: 12px;
-    display: block; /* Всегда блочный на мобильных */
+    flex-direction: column; /* Всегда колонка на мобильных */
+    height: 100%;
   }
   
   @media (max-width: 480px) {
@@ -462,6 +465,9 @@ const HeartButton = styled.button<{ isFavorite: boolean }>`
 const ProductInfo = styled.div<{ view: 'grid' | 'list' }>`
   padding: 20px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Позволяет flex-элементам сжиматься */
   
   @media (max-width: 768px) {
     padding: 15px;
@@ -475,13 +481,22 @@ const ProductInfo = styled.div<{ view: 'grid' | 'list' }>`
     font-size: 1.3rem;
     margin-bottom: 10px;
     color: var(--text-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    max-height: 3.6em; /* 2 строки * 1.4 * 1.3rem */
     
     @media (max-width: 768px) {
       font-size: 1.1rem;
+      max-height: 3.08em; /* 2 строки * 1.4 * 1.1rem */
     }
     
     @media (max-width: 480px) {
       font-size: 1rem;
+      max-height: 2.8em; /* 2 строки * 1.4 * 1rem */
     }
   }
   
@@ -596,33 +611,38 @@ const CatalogPage: React.FC = () => {
 
   const models = filteredModels;
 
-  // Функция для определения новых релизов (за последние 3 месяца от 23.7.25)
-  const isNewRelease = (releaseDate: string): boolean => {
-    if (!releaseDate) return false;
+  // Функция для парсинга даты релиза в разных форматах
+  const parseReleaseDate = useCallback((releaseDate: string): Date | null => {
+    if (!releaseDate) return null;
     
     try {
-      // Улучшенная обработка даты для iPhone
       let release: Date;
       
-      // Пробуем разные форматы даты для лучшей совместимости с iPhone
+      // Пробуем разные форматы даты
       if (releaseDate.includes('-')) {
-        // Проверяем формат MM-DD-YYYY (как в данных)
         const parts = releaseDate.split('-');
         if (parts.length === 3) {
+          // Проверяем формат MM-DD-YYYY (как в данных)
           const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
           const day = parseInt(parts[1]);
           const year = parseInt(parts[2]);
-          release = new Date(year, month, day, 0, 0, 0, 0);
+          if (year > 1000) {
+            // Это MM-DD-YYYY
+            release = new Date(year, month, day, 0, 0, 0, 0);
+          } else {
+            // Это YYYY-MM-DD
+            release = new Date(releaseDate + 'T00:00:00.000Z');
+          }
         } else {
-          // Формат YYYY-MM-DD - добавляем время для лучшей совместимости
+          // Формат YYYY-MM-DD
           release = new Date(releaseDate + 'T00:00:00.000Z');
         }
       } else if (releaseDate.includes('/')) {
         // Формат MM/DD/YYYY или DD/MM/YYYY
         const parts = releaseDate.split('/');
         if (parts.length === 3) {
-          // Предполагаем формат MM/DD/YYYY для лучшей совместимости
-          const month = parseInt(parts[0]) - 1; // месяцы в JS начинаются с 0
+          // Предполагаем формат MM/DD/YYYY
+          const month = parseInt(parts[0]) - 1;
           const day = parseInt(parts[1]);
           const year = parseInt(parts[2]);
           release = new Date(year, month, day, 0, 0, 0, 0);
@@ -635,8 +655,25 @@ const CatalogPage: React.FC = () => {
       }
       
       if (isNaN(release.getTime())) {
-        return false;
+        return null;
       }
+      
+      return release;
+    } catch (error) {
+      return null;
+    }
+  }, []);
+
+  // Функция для определения новых релизов (за последние 3 месяца от 23.7.25)
+  const isNewRelease = useCallback((releaseDate: string): boolean => {
+    if (!releaseDate) return false;
+    
+    const release = parseReleaseDate(releaseDate);
+    if (!release) {
+      return false;
+    }
+    
+    try {
       
       // Базовая дата: 23 июля 2025 года
       const baseDate = new Date(2025, 6, 23, 23, 59, 59, 999); // конец дня
@@ -658,7 +695,7 @@ const CatalogPage: React.FC = () => {
     } catch (error) {
       return false;
     }
-  };
+  }, [parseReleaseDate]);
 
 
 
@@ -805,12 +842,39 @@ const CatalogPage: React.FC = () => {
           break;
 
         case 'newest':
-          comparison = (a.isNew ? 1 : 0) - (b.isNew ? 1 : 0);
+          // Сортировка по дате релиза (releaseDate) - новые первыми
+          const dateA = a.releaseDate ? parseReleaseDate(a.releaseDate) : null;
+          const dateB = b.releaseDate ? parseReleaseDate(b.releaseDate) : null;
+          
+          if (dateA && dateB) {
+            // Оба товара имеют дату - сортируем по дате (новые первыми)
+            // Если dateB новее (dateB.getTime() > dateA.getTime()), то b должен идти перед a
+            // Для этого comparison должен быть положительным (a идет после b)
+            comparison = dateB.getTime() - dateA.getTime();
+          } else if (dateA && !dateB) {
+            // Товар с датой идет первым
+            comparison = -1;
+          } else if (!dateA && dateB) {
+            // Товар с датой идет первым
+            comparison = 1;
+          } else {
+            // Если у обоих нет даты, используем флаг isNew как запасной вариант
+            const aIsNew = a.isNew ? 1 : 0;
+            const bIsNew = b.isNew ? 1 : 0;
+            comparison = bIsNew - aIsNew;
+          }
           break;
         default:
           comparison = 0;
       }
       
+      // Для сортировки "newest" всегда сортируем по убыванию (новые первыми)
+      if (sortBy.sortBy === 'newest') {
+        // Если comparison положительный (dateB новее), то b идет перед a (правильно)
+        // Если comparison отрицательный (dateA новее), то a идет перед b (правильно)
+        // НЕ инвертируем, так как логика уже правильная
+        return comparison;
+      }
       return sortBy.order === 'desc' ? -comparison : comparison;
     });
     
@@ -818,7 +882,7 @@ const CatalogPage: React.FC = () => {
     console.log('=== END FILTERING DEBUG ===');
     setIsLoading(false);
     return filtered;
-  }, [filters, sortBy, searchParams, favorites, showFavoritesOnly]);
+  }, [filters, sortBy, searchParams, favorites, showFavoritesOnly, isNewRelease, parseReleaseDate]);
 
   // Пагинация
   const ITEMS_PER_PAGE = 20;
