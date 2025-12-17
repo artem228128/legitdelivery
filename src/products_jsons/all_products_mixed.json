@@ -45851,33 +45851,6 @@
     "stable_id": true
   },
   {
-    "url": "https://www.goat.com/sneakers/dunk-low-premium-vast-grey-dd8338-001",
-    "title": "Dunk Low Premium 'Vast Grey'",
-    "brand": "Nike",
-    "model": "Dunk Low",
-    "price": "$168",
-    "images": [
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/513/original/883900_01.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/516/original/883900_02.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/512/original/883900_03.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/511/original/883900_04.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/509/original/883900_05.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/506/original/883900_06.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/505/original/883900_07.jpg.jpeg?action=crop&width=750",
-      "https://image.goat.com/transform/v1/attachments/product_template_additional_pictures/images/068/936/508/original/883900_08.jpg.jpeg?action=crop&width=750"
-    ],
-    "description": "",
-    "sku": "DD8338",
-    "release_date": "08-24-2022",
-    "type": "Sneakers",
-    "category": "dunk_products.json",
-    "source_file": "dunk_products_final.json",
-    "global_id": 1804,
-    "mixed_at": "2025-07-21T12:29:44.552Z",
-    "id": "json_DD8338",
-    "stable_id": true
-  },
-  {
     "url": "https://www.goat.com/sneakers/air-zoom-vomero-5-vapor-green-hf5493-301",
     "title": "Air Zoom Vomero 5 'Vapor Green'",
     "brand": "Nike",
